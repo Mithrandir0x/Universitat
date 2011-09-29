@@ -73,4 +73,3 @@ def suma():
 
 def divisible():
     print "Calcul del nombre natural mes petit que es divisible per 2, 3, 4, 5, 6, 7, 8, 9, i 10"
-     print "Calcul del nombre natural mes petit que es divisible per 2, 3, 4, 5, 6, 7, 8, 9, i 10"print "Calcul del nombre natural mes petit que es divisible per 2, 3, 4, 5, 6, 7, 8, 9, i 10"
