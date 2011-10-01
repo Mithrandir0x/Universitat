@@ -39,10 +39,8 @@ def punts():
 def euclid_real():
     print "Calcul de la distancia euclidiana entre dos punts"
     x1, y1, x2, y2 = input("Donem els punts en format 'x1, y1, x2, y2': ")
-    inner = ( ( x2 - x1 ) ** 2 ) + ( ( y2 - y1 ) ** 2 )
+    inner = ( ( x2 - x1 ) ** 2 ) + ( ( y2 - y1 ) ** 2 )    
     res = math.sqrt(inner)
-    if inner < 0:
-        print "No es pot calcular."
     return res
 
 def euclid():
@@ -60,7 +58,7 @@ def factmenor():
     while cal < val:
         cal = cal * n
         n = n + 1
-    print n
+    print n - 1
 
 def suma():
     print "Suma dels nombres menors de 100 que son multiples de 3 i 5"
@@ -73,3 +71,13 @@ def suma():
 
 def divisible():
     print "Calcul del nombre natural mes petit que es divisible per 2, 3, 4, 5, 6, 7, 8, 9, i 10"
+    val = 0
+    for x in range(1, 11):
+        for i in range(x, 1, -1):
+            if x % i == 0:
+                val = i
+            #print x % i, i, x, val
+
+        #print val
+        #print
+
