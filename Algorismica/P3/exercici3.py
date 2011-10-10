@@ -65,5 +65,3 @@ def paraula():
     parCercar = input('Escriu la paraula a ser cercada: ')
     print realSearch(parCercar)
 
-cesar()
-
