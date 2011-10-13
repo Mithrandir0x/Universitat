@@ -5,13 +5,15 @@
 #
 
 import math
+import random
 
 def mentre():
     n = input('Introdueix un valor numeric: ')
-    i = 0
+    i = 1
     suma = 0
-    while i < n:
+    while i <= n:
         suma = suma + i
+        i = i + 1
     print suma
 
 def mentre2():
@@ -19,16 +21,17 @@ def mentre2():
     i = 0
     suma = 0
     while i < n:
-        i = 2 * i + 1
-        suma = suma + i
+        i = i + 1
+        suma = suma + ( 2 * i - 1 )
     print suma
 
 def mentre3():
     suma = 0
-    n = input()
+    print 'Introdueix valors numerics: ',
+    n = float(input())
     while n != 999:
         suma = suma + n
-        n = input()
+        n = float(input())
     print suma
 
 def mentre4():
@@ -40,7 +43,15 @@ def mentre4():
     print suma
 
 def inversio():
-    print 'Inteligencia insuficient per fer aquest problema.'
+    inv = input('Entra la inversio desitjada: ')
+    intAnual = float(input('Entra l\'interes anual: ')) / 100
+    acu = inv
+    anys = 0
+    while acu < 2 * inv:
+        acu = acu * ( 1 + intAnual )
+        #print anys, acu, 2 * inv
+        anys = anys + 1
+    print anys
 
 def nota():
     qualificacions = {
@@ -83,7 +94,17 @@ def dni():
         print 'El contingut introduit no es numeric.'
 
 def llista():
-    print 'Consultar metode d"entrada amb el professor'
+    col = input('Introdueix una cadena de caracters separades per espais \no una col-leccio interpretable per Python: ')
+    if isinstance(col, str):
+        # col es una cadena de paraules separades
+        col = col.split(' ')
+    i = 0
+    l = len(col)
+    while i < l:
+        r = random.randint(0, l)
+        print col[r] + ', '
+        col.pop(r)
+        l = len(col)
 
 def otan():
     alfabetOtan = {
@@ -112,7 +133,10 @@ def otan():
         'W' : 'Whiskey',
         'X' : 'Xray',
         'Y' : 'Yankee',
-        'Z' : 'Zulu'
+        'Z' : 'Zulu',
+        ' ' : ' ',
+        ',' : ',',
+        '.' : '.'
     }
 
     par = input('Escriu una paraula: ')
@@ -120,5 +144,5 @@ def otan():
         print alfabetOtan[par[i].upper()],
     print
 
-otan()
+llista()
 
