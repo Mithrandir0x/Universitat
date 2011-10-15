@@ -101,8 +101,8 @@ def llista():
     i = 0
     l = len(col)
     while i < l:
-        r = random.randint(0, l)
-        print col[r] + ', '
+        r = random.randint(0, l - 1)
+        #print col[r] + ', '
         col.pop(r)
         l = len(col)
 
@@ -143,6 +143,4 @@ def otan():
     for i in range(len(par)):
         print alfabetOtan[par[i].upper()],
     print
-
-llista()
 
