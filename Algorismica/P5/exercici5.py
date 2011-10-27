@@ -41,8 +41,14 @@ def mergeSort(A, B):
     mergedList = B[:] # Copia del contingut de B, per evitar un alies
     mergedList.append('')
     mergedList[-1:] = A
-    return mergedList.sort()
+    mergedList.sort() # El metode 'sort' no retorna res, modifica l'objecte
+    return mergedList
 
+def deleteNoneValuesFromList(A):
+    [A.pop(i) for i in A
+     if i == None]
+
+# Solucio a forca bruta
 def recursiveSieve(A, B, N):
     if A[0] > math.sqrt(N):
         return
@@ -56,13 +62,8 @@ def recursiveSieve(A, B, N):
             j = j + 1
         recursiveSieve(A, B, N)
 
-def eraIterative():
-    N = input('Escriu el terme n: ')
-    A = [] # Tots els valors entre 2 i N
-    B = [] # Llista on es guardaran tots els nombres primers
-    for i in range(2, N + 1):
-        A.append(i)
-    tStart = time.time()
+# Solucio iterativa
+def iterativeSieve(A, B, N):
     sqrtN = math.sqrt(N)
     prime = A[0]
     while prime < sqrtN:
@@ -73,11 +74,16 @@ def eraIterative():
                 A.pop(j)
             j = j + 1
         prime = A[0]
-    
+
+def era0():
+    N = 100000
+    A = [] # Tots els valors entre 2 i N
+    B = [] # Llista on es guardaran tots els nombres primers
+    [A.append(i) for i in range(2, N + 1)]    
+    tStart = time.time()
+    iterativeSieve(A, B, N)
     print time.time() - tStart
-    print A
-    print B
-    print mergeSort(A,B)
+    #print mergeSort(A,B)
 
 def era1():
     N = input('Escriu el terme n: ')
@@ -90,17 +96,16 @@ def era1():
     print time.time() - tStart
     print mergeSort(A,B)
 
+# Anotacions
+#    50000 ~0.26s (amb pop) | Intel C2D E8500 (VM Virtual Box) - Ubuntu 11.04 (Natty Narwhal)
 def era2():
-    N = 10000000
+    N = 100000
     A = [] # Tots els valors entre 2 i N
     B = [] # Llista on es guardaran tots els nombres primers
-    for i in range(2, N + 1):
-        A.append(i)
+    [A.append(i) for i in range(2, N + 1)]
     tStart = time.time()
     recursiveSieve(A, B, N)
-    primeList = mergeSort(A,B)
     print time.time() - tStart
-    print len(primeList)
 
 def factorp():
     # Highly damaged brain cells
@@ -110,5 +115,6 @@ def fermatp():
     # brrrr
     print
 
-fib1()
+era0()
+era2()
 
