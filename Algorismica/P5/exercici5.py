@@ -76,14 +76,14 @@ def iterativeSieve(A, B, N):
         prime = A[0]
 
 def era0():
-    N = 100000
+    N = 1000
     A = [] # Tots els valors entre 2 i N
     B = [] # Llista on es guardaran tots els nombres primers
     [A.append(i) for i in range(2, N + 1)]    
     tStart = time.time()
     iterativeSieve(A, B, N)
     print time.time() - tStart
-    #print mergeSort(A,B)
+    print mergeSort(A,B)
 
 def era1():
     N = input('Escriu el terme n: ')
@@ -108,13 +108,37 @@ def era2():
     print time.time() - tStart
 
 def factorp():
-    # Highly damaged brain cells
-    print
+    # Llista dels nombres prims menors a 1000 calculats anteriorment amb la criba d'Eratostenes
+    primeList = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
+        73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163,
+        167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257,
+        263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359,
+        367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461,
+        463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577,
+        587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677,
+        683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809,
+        811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919,
+        929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
+    iPrime = 0
+    factorList = []
+    n = input('Introdueix el nombre a factoritzar: ')
+    tStart = time.time()
+    while n != 1:
+        try:
+            if n % primeList[iPrime] == 0:
+                factorList.append(primeList[iPrime])
+                n = n / primeList[iPrime]
+            else:
+                iPrime = iPrime + 1
+        except IndexError:
+            print 'Nombre prim no trobat. Si us plau, calcular mes nombres prims per poder factoritzar correctament el nombre demanat.'
+            break
+    print time.time() - tStart
+    print factorList
 
 def fermatp():
     # brrrr
     print
 
-era0()
-era2()
+factorp()
 
