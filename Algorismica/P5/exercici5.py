@@ -75,15 +75,47 @@ def iterativeSieve(A, B, N):
             j = j + 1
         prime = A[0]
 
+def iterativeSieve2(A, B, N):
+    sqrtN = math.sqrt(N)
+    i = 0
+    c2 = 0
+    c1 = 0
+    while A[i] < sqrtN:
+        if A[i] != None:
+            B.append(A[i])
+            prime = A[i]
+            j = i
+            while j < len(A):
+                if A[j] != None and A[j] % prime == 0:
+                    A[j] = None
+                j = j + 1
+                c2 = c2 + 1
+        i = i + 1
+        c1 = c1 + 1
+    print c1, c2
+
 def era0():
-    N = 1000
+    N = 100000
     A = [] # Tots els valors entre 2 i N
     B = [] # Llista on es guardaran tots els nombres primers
     [A.append(i) for i in range(2, N + 1)]    
     tStart = time.time()
     iterativeSieve(A, B, N)
     print time.time() - tStart
-    print mergeSort(A,B)
+    #print mergeSort(A,B)
+
+def era3():
+    N = 100000
+    A = [] # Tots els valors entre 2 i N
+    B = [] # Llista on es guardaran tots els nombres primers
+    [A.append(i) for i in range(2, N + 1)]    
+    tStart = time.time()
+    iterativeSieve2(A, B, N)
+    print time.time() - tStart
+    #print A
+    #print B
+    #print mergeSort(A,B)
+
 
 def era1():
     N = input('Escriu el terme n: ')
@@ -94,12 +126,14 @@ def era1():
     tStart = time.time()
     recursiveSieve(A, B, N)
     print time.time() - tStart
-    print mergeSort(A,B)
+    #print mergeSort(A,B)
 
 # Anotacions
 #    50000 ~0.26s (amb pop) | Intel C2D E8500 (VM Virtual Box) - Ubuntu 11.04 (Natty Narwhal)
+#    50000 ~0.53s (amb pop) | Intel C2D E8500 - Windows 7 x64 | Python 2.6.2
+#    50000 ~1.21s (amb pop) | Intel C2D P8600 (Mac Mini) - Snow Leopard 10.6.8 | Python 2.6.1
 def era2():
-    N = 100000
+    N = 50000
     A = [] # Tots els valors entre 2 i N
     B = [] # Llista on es guardaran tots els nombres primers
     [A.append(i) for i in range(2, N + 1)]
@@ -139,6 +173,4 @@ def factorp():
 def fermatp():
     # brrrr
     print
-
-factorp()
 
