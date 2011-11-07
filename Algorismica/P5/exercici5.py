@@ -7,23 +7,27 @@
 import math
 import time
 
-def realFib(f0, f1, i, n):
-    if n == 0:
-        return f0
-    elif n == 1:
-        return f1
-    elif i == n:
-        return f1 + f0
+# Metode iteratiu, molt mes eficient i sense el problema de profunditat
+def iterativeFib(N):
+    f0 = 0
+    f1 = 1
+    i = 0
+    if N == 0:
+        return 0
+    elif N == 1:
+        return 1
     else:
-        return realFib(f1, f0 + f1, i + 1, n)
+        while i < N:
+            f0, f1 = f1, f0 + f1
+            i = i + 1
+    return f0
 
 def fib1():
     n = input('Escriu per a quin terme "n" vols que calculi fibonacci: ')
-    tStart = time.time()
-    fibRes = realFib(0, 1, 2, n)
-    tEnd = time.time()
+    tStart = time.clock()
+    fibRes = iterativeFib(n)
+    print 'Temps del calcul:', time.clock() - tStart
     print 'Fibonacci(',n,') =', fibRes
-    print 'Temps del calcul:', tEnd - tStart,'s'
 
 def realMcd(m, n):
     mod = m % n
@@ -37,140 +41,66 @@ def mcd():
     n = input('Escriu el terme n: ')
     print realMcd(m, n)
 
-def mergeSort(A, B):
-    mergedList = B[:] # Copia del contingut de B, per evitar un alies
-    mergedList.append('')
-    mergedList[-1:] = A
-    mergedList.sort() # El metode 'sort' no retorna res, modifica l'objecte
-    return mergedList
-
-def deleteNoneValuesFromList(A):
-    [A.pop(i) for i in A
-     if i == None]
-
-# Solucio a forca bruta
-def recursiveSieve(A, B, N):
-    if A[0] > math.sqrt(N):
-        return
-    else:
-        j = 0
-        prime = A[0]
-        B.append(prime)
-        while j < len(A):
-            if A[j] % prime == 0:
-                A.pop(j)
-            j = j + 1
-        recursiveSieve(A, B, N)
-
-# Solucio iterativa
-def iterativeSieve(A, B, N):
+# S'utilitzen list comprehensions
+# 10000000 ~14.7s | Intel C2D P8600 (Mac Mini) - Snow Leopard 10.6.8 | Python 2.6.2
+def listComprehenSieve(A, N):
     sqrtN = math.sqrt(N)
-    prime = A[0]
-    while prime < sqrtN:
-        B.append(prime)
-        j = 0
-        while j < len(A):
-            if A[j] % prime == 0:
-                A.pop(j)
-            j = j + 1
-        prime = A[0]
+    [ setAiMinusOne(A, j) for i in xrange(A.index(int(sqrtN + 1)) + 1) for j in xrange(i, len(A), A[i]) if A[i] != A[j] and A[j] % A[i] == 0 ]
 
-def iterativeSieve2(A, B, N):
-    sqrtN = math.sqrt(N)
-    i = 0
-    c2 = 0
-    c1 = 0
-    while A[i] < sqrtN:
-        if A[i] != None:
-            B.append(A[i])
-            prime = A[i]
-            j = i
-            while j < len(A):
-                if A[j] != None and A[j] % prime == 0:
-                    A[j] = None
-                j = j + 1
-                c2 = c2 + 1
-        i = i + 1
-        c1 = c1 + 1
-    print c1, c2
+def setAiMinusOne(A, i):
+    A[i] = -1
 
-def era0():
-    N = 100000
-    A = [] # Tots els valors entre 2 i N
-    B = [] # Llista on es guardaran tots els nombres primers
-    [A.append(i) for i in range(2, N + 1)]    
-    tStart = time.time()
-    iterativeSieve(A, B, N)
-    print time.time() - tStart
-    #print mergeSort(A,B)
+def cleanEraList(A):
+    return [ A[i] for i in range(0, len(A)) if A[i] != -1 ]
 
-def era3():
-    N = 100000
-    A = [] # Tots els valors entre 2 i N
-    B = [] # Llista on es guardaran tots els nombres primers
-    [A.append(i) for i in range(2, N + 1)]    
-    tStart = time.time()
-    iterativeSieve2(A, B, N)
-    print time.time() - tStart
-    #print A
-    #print B
-    #print mergeSort(A,B)
-
+def realEra(N):
+    A = [i for i in range(2, N + 1)]
+    listComprehenSieve(A, N)
+    return A
 
 def era1():
     N = input('Escriu el terme n: ')
-    A = [] # Tots els valors entre 2 i N
-    B = [] # Llista on es guardaran tots els nombres primers
-    for i in range(2, N + 1):
-        A.append(i)
-    tStart = time.time()
-    recursiveSieve(A, B, N)
-    print time.time() - tStart
-    #print mergeSort(A,B)
+    tStart = time.clock()
+    primeList = realEra(N)
+    primeList = cleanEraList(primeList)
+    print time.clock() - tStart
+    print primeList
 
-# Anotacions
-#    50000 ~0.26s (amb pop) | Intel C2D E8500 (VM Virtual Box) - Ubuntu 11.04 (Natty Narwhal)
-#    50000 ~0.53s (amb pop) | Intel C2D E8500 - Windows 7 x64 | Python 2.6.2
-#    50000 ~1.21s (amb pop) | Intel C2D P8600 (Mac Mini) - Snow Leopard 10.6.8 | Python 2.6.1
+# Es triguen 17.19 segons a completar aquesta funcio en un Mac Mini amb un 
+# Intel P8600 - Python 2.6.2 - Snow Leopard 10.6.8
 def era2():
-    N = 50000
-    A = [] # Tots els valors entre 2 i N
-    B = [] # Llista on es guardaran tots els nombres primers
-    [A.append(i) for i in range(2, N + 1)]
-    tStart = time.time()
-    recursiveSieve(A, B, N)
-    print time.time() - tStart
+    tStart = time.clock()
+    primeList = realEra(10000000)
+    primeList = cleanEraList(primeList)
+    print time.clock() - tStart
+    print len(primeList)
 
 def factorp():
-    # Llista dels nombres prims menors a 1000 calculats anteriorment amb la criba d'Eratostenes
-    primeList = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
-        73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163,
-        167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257,
-        263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359,
-        367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461,
-        463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577,
-        587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677,
-        683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809,
-        811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919,
-        929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
+    n = input('Introdueix el nombre a factoritzar: ')
+    if n == 1:
+        return [1]
+    tStart = time.clock()
+    A = realEra(n)
+    A = cleanEraList(A)
     iPrime = 0
     factorList = []
-    n = input('Introdueix el nombre a factoritzar: ')
-    tStart = time.time()
     while n != 1:
-        try:
-            if n % primeList[iPrime] == 0:
-                factorList.append(primeList[iPrime])
-                n = n / primeList[iPrime]
-            else:
-                iPrime = iPrime + 1
-        except IndexError:
-            print 'Nombre prim no trobat. Si us plau, calcular mes nombres prims per poder factoritzar correctament el nombre demanat.'
-            break
-    print time.time() - tStart
+        if n % A[iPrime] == 0:
+            factorList.append(A[iPrime])
+            n = n / A[iPrime]
+        else:
+            iPrime = iPrime + 1
+    print time.clock() - tStart
     print factorList
 
 def fermatp():
-    # brrrr
-    print
+    n = input('Escriu un valor n: ')
+    aValues = [2, 3, 5]
+    tStart = time.clock()
+    for a in aValues:
+        if (a ** (n - 1)) % n == 1:
+            print 'Per n =', n, ' i a =', a, ' es podria considerar un nombre prim.'
+        else:
+            print 'Per n =', n, ' i a =', a, ' es un nombre compost.'
+    print time.clock() - tStart
 
