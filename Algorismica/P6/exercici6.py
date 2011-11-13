@@ -4,14 +4,18 @@
 # autor: olopezsa13
 #
 
+import time
+
 # In Soviet Russia, zero divides by you...
 def levenshtein(text, pattern):
+    text = text.rstrip()
+    pattern = pattern.rstrip()
     lnText = len(text) + 1
     lnPattern = len(pattern) + 1
     distanceMatrix = [[0] * lnPattern for x in range(lnText)]
     for j in range(lnPattern): distanceMatrix[0][j] = j
     for i in xrange(1, lnText):
-        for j in range(1, lnPattern):
+        for j in xrange(1, lnPattern):
             deletion = distanceMatrix[i-1][j] + 2
             insertion = distanceMatrix[i][j-1] + 2
             substitution = distanceMatrix[i-1][j-1]
@@ -66,10 +70,10 @@ def reconstruirCami(md, ultimaEdicio):
 
 # Funcio encarregada de llegir i retornar totes les linees del nom de fitxer
 # donat. En cas de que no existeixi, es retorna un vector buit.
-def llegirCromosoma(fitxer):
+def llegirCromosoma(nomFitxer):
     try:
-        f = open(fitxer, 'r')
-        liniesCromosoma = f.readLines()
+        f = open(nomFitxer, 'r')
+        liniesCromosoma = f.readlines()
         f.close()
         return liniesCromosoma
     except IOError:
@@ -92,10 +96,12 @@ def cercaGenetica():
             cm = trobarCostEdicioMinim(matriu)
             if cm['z'] < costMinim:
                 costMinim = cm['z']
-                camiEdicio = reconstruiCami(matriu, costMinim)
+                camiEdicio = reconstruirCami(matriu, cm)
                 linia = liniaActual
         tElapsed = time.time() - tStart
-        print 'El patro', cadena, 'es troba a la linia', linea, 'posicio', camiEdicio[len(camiEdicio)]['x'], 'del cromosoma 2 huma, i la seva distancia d\'edicio es', camiEdicio[0]['z'],'.'
-        print 'El substring del cromosoma huma mes semblant es', cromosoma[linea][camiEdicio[len(camiEdicio) - 1]['x']:camiEdicio[0]['x']]
+        print 'El patro', cadena, 'es troba a la linia', linia, 'posicio', camiEdicio[len(camiEdicio) - 1]['x'], 'del cromosoma 2 huma, i la seva distancia d\'edicio es', camiEdicio[0]['z']
+        print 'El substring del cromosoma huma mes semblant es', cromosoma2[linia][camiEdicio[len(camiEdicio) - 1]['x'] - 1:camiEdicio[0]['x']]
         print 'El temps de calcul ha estat', tElapsed
+
+cercaGenetica()
 
