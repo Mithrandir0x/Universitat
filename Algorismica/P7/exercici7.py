@@ -31,5 +31,16 @@ def reverse(frase):
     f = realReverse(frase)
     print f
 
-reverse('Hola, com estas?')
+def negatius(L):
+    ultim = len(L)
+    i = 0
+    j = ultim - 1
+    pivotVirtual = 0
+    while True:
+        while i <= ultim and L[i] < pivotVirtual: i += 1
+        while j >= 0 and L[j] >= pivotVirtual: j -= 1
+        if i >= j:
+            break
+        else:
+            L[i], L[j] = L[j], L[i]
 
