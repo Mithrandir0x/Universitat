@@ -4,9 +4,9 @@
 # autor: olopezsa13
 #
 
+import genetic
 import math
 import time
-import cProfile
 
 def func1d(x):
     return x * ( math.sin(10 * math.pi * x) ) + 1.0
@@ -34,36 +34,55 @@ def search1d(res):
         nProc += 1
         y = func1d(x)
         if y > yMax:
-            yMax = y # 217 234 211.
+            yMax = y
             xMax = x
     tEnd = time.time()
     print xMax, yMax, tEnd - tStart, nProc
 
-def vector2(x, y):
-    return { 'x': float(x), 'y': float(y) }
-
-def copyVector(vFrom, vTo):
-    vTo['x'] = vFrom['x']
-    vTo['y'] = vFrom['y']
-
-def toString(v):
-    return '(' + str(v['x']) + ', ' + str(v['y']) + ')'
+# Clase per representar un vector de 2 reals
+class Vector2():
+    def __init__(self, x, y):
+        self.x = float(x)
+        self.y = float(y)
+    def __str__(self):
+        return '(' + str(self.x) + ', ' + str(self.y) + ')'
 
 def func2d(v):
-    return 200.0 - ( ( v['x'] ** 2.0 + v['y'] - 11.0 ) ** 2.0 ) - ( ( v['x'] + v['y'] ** 2.0 - 7.0 ) ** 2.0 )
+    return 200.0 - ( ( v.x ** 2.0 + v.y - 11.0 ) ** 2.0 ) - ( ( v.x + v.y ** 2.0 - 7.0 ) ** 2.0 )
 
+#
 def frange2d(vStart, vEnd, inc):
-    v = vector2(vStart['x'], vStart['y'])
-    while v['x'] <= vEnd['x']:
-        while v['y'] <= vEnd['y']:
+    v = Vector2(vStart.x, vStart.y)
+    while v.x <= vEnd.x:
+        while v.y <= vEnd.y:
             yield v
-            v['y'] += inc
-        v['x'] += inc
-        v['y'] = vStart['y']
+            v.y += inc
+        v.x += inc
+        v.y = vStart.y
 
-def search2d(res):
+# Busca el maxim de la funcio dins l'interval definit pels vectors
+# vStart, que ha de ser l'extrem inferior esquerra i vEnd, que ha
+# de ser l'extrem superior de la dreta.
+def segmentedSearch2d(vStart, vEnd, res):
     zMax = float('-inf')
-    for p in frange2d(vector2(-1, -1), vector2(0, 0), res):
+    pMax = Vector2(float('-inf'), float('-inf'))
+    for p in frange2d(vStart, vEnd, res):
+        z = func2d(p)
+        if z > zMax:
+            zMax = z
+            pMax.y = p.y
+            pMax.x = p.x
+    print 'Punt maxim a', pMax, 'amb valor', zMax
 
-search2d(0.1)
+# Plot3D[200 - (x^2+y-11)^2-(x+y^2-7)^2, {x, -6, 6}, {y, -6, 6}, PlotRange -> {0, 300}]
+def search2d(res=0.001):
+    tStart = time.time()
+    segmentedSearch2d(Vector2(-6, 0), Vector2(0, 6), res)
+    segmentedSearch2d(Vector2(0, 0), Vector2(6, 6), res)
+    segmentedSearch2d(Vector2(-6,-6), Vector2(0, 0), res)
+    segmentedSearch2d(Vector2(0, -6), Vector2(6, 0), res)
+    tEnd = time.time()
+    print "S'ha trigat", tEnd - tStart, 's'
+
+#genetic.genetic2(genetic.cost2)
 
