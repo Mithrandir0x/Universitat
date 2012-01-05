@@ -1,0 +1,53 @@
+a	un, uno, una[Article]
+aardvark	cerdo hormiguero
+aardvark	oso hormiguero[Noun]
+aardvarks	cerdos hormigueros
+aardvarks	osos hormigueros 
+ab	prefijo que indica separacio/n
+aback	hacia atras
+aback	hacia atrás,take aback, desconcertar. En facha.
+aback	por sopresa, desprevenidamente, de improviso
+aback	atra/s[Adverb]
+abacterial	abacteriano, sin bacterias
+abacus	a/baco
+abacuses	a/bacos
+abaft	A popa (towards stern)/En popa (in stern)
+abaft	detra/s de[Adverb]
+abalone	abulo/n
+abalone	oreja de mar (molusco)[Noun]
+abalone	oreja de mar[Noun]
+abalones	abulones
+abalones	orejas de mar (moluscos)[Noun]
+abalones	orejas de mar[Noun]
+abandon	abandonar
+abandon	darse por vencido[Verb]
+abandon	dejar
+abandon	desamparar, desertar, renunciar, evacuar, repudiar
+abandon	renunciar a[Verb]
+abandon	abandono[Noun]
+abandoned	abandonado
+abandoned	dejado
+abandoned	desamparado
+abandoned	olvidado
+abandoned	abandonada,abandonado, abandonados, abandonadas[Verb]
+abandonee	abandonado
+abandonee	aislado
+abandonee	dejado
+abandonee	desamparado
+abandonee	money
+abandoner	abandonador
+abandoning	abandonando
+abandoning	abandono
+abandonment	abandono
+abandonment	desamparo, deserción
+abandonments	abandonos
+abandons	abandona
+abandons	desampara
+abase	abatir
+abase	abatir, envilecer
+abase	denigrar[Verb]
+abase	rebajar, humillar, degradar
+abase	rebajar, degradar, humillar, abatir[Verb]
+abased	degradado
+abased	rebajado, humillado, degradado
+abased	rebajado, degradado, humillado, abatido[Adjective]
