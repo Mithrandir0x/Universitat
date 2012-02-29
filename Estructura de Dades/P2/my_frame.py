@@ -24,8 +24,8 @@ class UbFrame(Frame):
         Frame.__init__(self, master)
 
         # Internal properties initialization. Although not really needed, but
-        # it makes easier to know which properties does have.
-        # Also, the logo image is load at this point.
+        # it makes easier to know which properties does have the class.
+        # Also, the logo image is loaded at this point.
         self.ubLogo = PhotoImage(file = 'logoub.gif')
         self.logoCanvas = None
         self.label = None
@@ -43,7 +43,6 @@ class UbFrame(Frame):
     instance of UbFrame.
     """
     def initializeMainWindow(self, master):
-        master.title = "UB Window"
         master.geometry("%dx%d" % (self.ubLogo.width(), self.ubLogo.height() + 42))
 
     """
