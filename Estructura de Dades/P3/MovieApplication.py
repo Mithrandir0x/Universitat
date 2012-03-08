@@ -10,10 +10,15 @@ import Image
 import ImageTk
 import os
 import random
+import shutil
 import types
 import urllib
 
 class Movie:
+    """
+    Movie model. It stores all the information about a movie.
+    It also gives several methods to import and export data.
+    """
     def __init__(self,
             title = "",
             director=[],
@@ -141,6 +146,7 @@ class Movie:
 class MovieDisplay(Frame):
     """ This widget displays Movie information. """
     def __init__(self, master):
+        """ Constructor. It creates all the needed components to render movie data. """
         Frame.__init__(self, master)
 
         self.titleText = StringVar()
@@ -181,6 +187,12 @@ class MovieDisplay(Frame):
         self.ratingText.set(movie.rating)
         self._setMoviePicture(movie.coverUrl)
 
+    def clearImageCache(self):
+        """
+        It removes the image cache folder. Do not call if images are being used.
+        """
+        shutil.rmtree("./cache/")
+
     def _setMoviePicture(self, imageUrl):
         """
         'Private' method that renders the image designated by 'imageUrl'.
@@ -196,7 +208,7 @@ class MovieDisplay(Frame):
             if not os.path.exists(imagePath):
                 print "Creating '%s'..." % ( imagePath )
                 urllib.urlretrieve(imageUrl, imagePath)
-                urllib.urlcleanup()
+            urllib.urlcleanup()
 
             try:
                 # Scaffold image loading. If any exception arises for image
@@ -219,7 +231,7 @@ class MovieApp(Frame):
     Main application.
     """
     def __init__(self, master, filename):
-        """ Film data is loaded, and the GUI is stablished. """
+        """ Film data is loaded (sorted by title), and the GUI is stablished. """
         Frame.__init__(self, master)
 
         print "WARNING: This program creates a folder named 'cache' where MovieApp will save movie covers."
@@ -233,6 +245,8 @@ class MovieApp(Frame):
 
         self.nextMovieButton = Button(master, text = "Next Movie", command = self.nextMovie).grid(row = 1, column = 0, sticky = W)
         self.randomMovieButton = Button(master, text = "Random Movie", command = self.randomMovie).grid(row = 1, column = 1)
+
+        master.protocol("WM_DELETE_WINDOW", self.onApplicationClose)
 
         self.showMovie()
     
@@ -267,9 +281,22 @@ class MovieApp(Frame):
         # YOU U NO LIEK MERGESORT?
         self.movies = self._mergeSort(self.movies)
 
+    def onApplicationClose(self):
+        """
+        Method called whe widget is about to be closed. In this method, the
+        movie display's image cache is cleared, and the widget is closed.
+        """
+        self.movieDisplay.clearImageCache()
+        self.quit()
+
     def _mergeSort(self, movies):
         """
-        Classic mergesort top-down implementation.
+        Private method. Classic mergesort top-down implementation.
+
+        I think it would be valid to add this implementation to
+        orderMovies method, but if there's any change in the data
+        model, I believe it is better to keep a clean public API and
+        not change method signatures as much as possible.
 
         @author John von Neumann
         """
@@ -283,7 +310,7 @@ class MovieApp(Frame):
 
     def _merge(self, left, right):
         """
-        The merge function, needed by mergesort.
+        Private method. The merge function, needed by mergesort.
 
         @author John von Neumann
         """
