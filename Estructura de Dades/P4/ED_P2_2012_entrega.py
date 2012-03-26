@@ -17,6 +17,7 @@ class Node:
         self.prev = prev
 
     def __str__(self):
+        """ When printing a node, it prints the content of the data. """
         return self.data.__str__()
                 
 class Stack:
@@ -65,13 +66,61 @@ class Stack:
 
 class Queue:
     """
-    A basic implementation of a FIFO heterogeneous collection.
+    An inefficient implementation of a FIFO heterogeneous collection.
     """
     def __init__(self):
-        """
-        It's pretty obvious, but when a new queue is instanced,
-        it is empty.
-        """
+        """ When constructed, the queue is empty. """
+        self.head = None
+
+    def __str__(self):
+        """ Returns a string representation of the queue's content. """
+        if self.isEmpty():
+            return "Empty queue."
+
+        node, i, text = self.head, 1, ""
+        while node != None:
+            text += "(%s) %s\n" % (i, node)
+            node = node.next
+            i += 1
+        return text
+
+    def isEmpty(self):
+        """ Tells whether the queue is empty or not. """
+        return self.head == None
+
+    def enqueue(self, data):
+        """ Queues a new element to the queue. """
+        temp = Node(data, self.head)
+        self.head = temp
+
+    def dequeue(self):
+        """ Removes the oldest element from the queue. """
+        if self.isEmpty():
+            # Raise exception if someone tries to dequeue from an empty queue.
+            raise IndexError("Tried to dequeue from an empty queue.")
+
+        if self.head.next == None:
+            # Treat one-element queue as a unique case
+            temp = self.head.data
+            self.head = None
+            return temp
+        else:
+            # Queues with more than one element
+            now = self.head
+            prev = None
+            while now.next != None:
+                prev = now
+                now = now.next
+            temp = now.data
+            prev.next = None
+            return temp
+
+class EfficientQueue:
+    """
+    A basic (yet efficient, I think) implementation of a FIFO heterogeneous collection.
+    """
+    def __init__(self):
+        """ When constructed, the queue is empty. """
         self.head = None
         self.tail = None
 
@@ -94,6 +143,7 @@ class Queue:
     def enqueue(self, data):
         """ Adds a new element at the beginning of the queue. """
         if self.isEmpty():
+            # Treat the empty queue as a special case
             self.tail = Node(data)
             self.head = self.tail
         else:
@@ -109,7 +159,7 @@ class Queue:
         exception will be raised.
         """
         if self.isEmpty():
-            raise IndexError("Tried to pop from an empty queue.")
+            raise IndexError("Tried to dequeue from an empty queue.")
 
         temp = self.tail.data
         if self.head == self.tail:
@@ -158,20 +208,17 @@ class Movie:
     
     def __str__(self):
         """ Returns a reduced set of movie information """
-        directors = ""
-        if isinstance(self.director, types.StringTypes):
-            directors = self.director
-        else:
-            directors = ', '.join(self.director)
+        self.getTitle()
 
-        return "%s | %s | %s | %s" % ( self.title, directors, self.year, self.rating )
+    def getTitle(self):
+        return self.title
     
     def parseArray(self, data):
         """ 
         Given a multi-sized array that contains the movie information,
         this method loads the data from it inside the object.
         """
-        self.title = data[0]
+        self.getTitle() = data[0]
         self.director = data[1]
         self.cast = data[2]
         self.producer = data[3]
@@ -236,7 +283,7 @@ def loadMovieList(filename):
 movieList = loadMovieList('peliculas100.dat')
 ## Reduce MovieList to 20 elements
 movieList = movieList[0:20]
-
+"""
 newStack = Stack()
 print newStack
 
@@ -259,17 +306,19 @@ m3 = newStack.pop()
 print newStack
 
 # Trying to pop out of an empty stack.
+m4 = None
 try:
     m4 = newStack.pop()
     print newStack
 except IndexError:
     print "Nice try, little sparrow.\n"
 
-print m1.title
-print m2.title
-print m3.title
-##print m4.title  GUESS WHAT HAPPENS...
-
+print m1.getTitle()
+print m2.getTitle()
+print m3.getTitle()
+print m4
+##print m4.getTitle()  GUESS WHAT HAPPENS...
+"""
 ## THIS IS TO TEST YOUR CODE - QUEUE
 queue = Queue()
 print queue
@@ -298,7 +347,7 @@ try:
 except IndexError:
     print "Now, lad, tell me something I don't know about queues...\n"
 
-print m1.title
-print m2.title
-print m3.title
-##print m4.title  GUESS WHAT HAPPENS...
+print m1.getTitle()
+print m2.getTitle()
+print m3.getTitle()
+##print m4.getTitle()  GUESS WHAT HAPPENS...
