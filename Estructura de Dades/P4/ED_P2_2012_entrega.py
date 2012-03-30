@@ -14,7 +14,7 @@ class Node:
     def __init__(self, data = None, next = None, prev = None):
         self.data = data
         self.next = next
-        self.prev = prev
+        self.prev = prev # Only used by EfficientQueue class.
 
     def __str__(self):
         """ When printing a node, it prints the content of the data. """
@@ -66,7 +66,7 @@ class Stack:
 
 class Queue:
     """
-    An inefficient implementation of a FIFO heterogeneous collection.
+    An implementation of a single headed FIFO heterogeneous collection.
     """
     def __init__(self):
         """ When constructed, the queue is empty. """
@@ -94,7 +94,12 @@ class Queue:
         self.head = temp
 
     def dequeue(self):
-        """ Removes the oldest element from the queue. """
+        """
+        Removes the oldest element from the queue.
+
+        WARNING: Do not dequeue from an empty queue or an IndexError
+        exception will be raised.
+        """
         if self.isEmpty():
             # Raise exception if someone tries to dequeue from an empty queue.
             raise IndexError("Tried to dequeue from an empty queue.")
@@ -109,15 +114,20 @@ class Queue:
             now = self.head
             prev = None
             while now.next != None:
+                # Iterate over all the elements of the queue until we find the
+                # last one
                 prev = now
                 now = now.next
+            # At this stage:
+            #     'now' is refering to the last element of the queue
+            #     'prev' is refering to the element before the last one
             temp = now.data
             prev.next = None
             return temp
 
 class EfficientQueue:
     """
-    A basic (yet efficient, I think) implementation of a FIFO heterogeneous collection.
+    A basic (yet efficient, I believe) implementation of a FIFO heterogeneous collection.
     """
     def __init__(self):
         """ When constructed, the queue is empty. """
@@ -143,7 +153,8 @@ class EfficientQueue:
     def enqueue(self, data):
         """ Adds a new element at the beginning of the queue. """
         if self.isEmpty():
-            # Treat the empty queue as a special case
+            # If the queue is empty, simply create a new node at the
+            # end, and refer the head to this one
             self.tail = Node(data)
             self.head = self.tail
         else:
@@ -163,9 +174,12 @@ class EfficientQueue:
 
         temp = self.tail.data
         if self.head == self.tail:
+            # When there's only one element in the queue, both head
+            # and tail refer to no element
             self.head = None
             self.tail = None
         else:
+            # Remove the tail
             self.tail = self.tail.prev
             self.tail.next = None
 
@@ -208,9 +222,10 @@ class Movie:
     
     def __str__(self):
         """ Returns a reduced set of movie information """
-        self.getTitle()
+        return self.getTitle()
 
     def getTitle(self):
+        """ Returns the title of the movie. """
         return self.title
     
     def parseArray(self, data):
@@ -218,7 +233,7 @@ class Movie:
         Given a multi-sized array that contains the movie information,
         this method loads the data from it inside the object.
         """
-        self.getTitle() = data[0]
+        self.title = data[0]
         self.director = data[1]
         self.cast = data[2]
         self.producer = data[3]
