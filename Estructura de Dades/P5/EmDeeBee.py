@@ -11,6 +11,7 @@ import ImageTk
 import os
 import random
 import shutil
+import time
 import types
 import urllib
 
@@ -56,7 +57,7 @@ class Queue:
         """ 'Private' This method is a python's generator used to iterate the queue. """
         node = self.head
         while node != None:
-            yield node
+            yield node.data
             node = node.right
 
     def isEmpty(self):
@@ -69,14 +70,14 @@ class Queue:
             # If the queue is empty, simply create a new node at the
             # end, and refer the head to this one
             self.tail = Node(data)
-            self.head = self.tail
+            self.head = self.textvariable
         else:
             temp = Node(data, self.head)
             self.head.left = temp
             self.head = temp
 
     def remove(self):
-        """ 
+        """
         Removes the oldest element of the queue.
 
         WARNING: Do not dequeue from an empty queue or an IndexError
@@ -98,8 +99,14 @@ class Queue:
 
         return temp
 
+    def peek(self):
+        """ Return the most important element without removing it. """
+        return self.tail.data
+
 class LinkedListPriorityQueue(Queue):
     """
+    Implementation of a priority queue using a linked list.
+
     Treat the 'head' as the element with the least priority, and 'tail' with utmost priority.
 
     Enqueueing elements may take O(N) complexity.
@@ -113,7 +120,7 @@ class LinkedListPriorityQueue(Queue):
         Adds the new element depending on its priority.
         """
         if self.isEmpty():
-            # Consider
+            # Consider the empty queue as a special case
             self.tail = Node(data)
             self.head = self.tail
         else:
@@ -152,8 +159,13 @@ class PriorityQueue:
     """
     Implementation of a PriorityQueue based on a binary heap.
 
-    The priority of the elements is evaluated by their own
-    comparator implementation.
+    Adding elements to the priority queue has O(log n) complexity.
+    Removing elements from the priority queue has O(log n) complexity.
+
+    Do not use this data structure with an ordered set of items, or it will become a
+    degenerate tree, uprising operations complexity to O(n^2).
+
+    The priority of the elements is evaluated by their own comparator implementation.
     """
     def __init__(self):
         self.root = None
@@ -172,17 +184,62 @@ class PriorityQueue:
                 self._next(node.right)
 
     def add(self, element):
-        self._insert(self.root, element)
+        """ Adds the element to the priority queue. """
+        self._add(self.root, element)
 
     def _add(self, root, element):
+        """
+        'Private' recursive method used by 'self.add' to add an element in the queue.
+        """
         if root == None:
             root = Node()
             root.data = element
         else:
+            # When adding an element from the actual node, all elements less important
+            # than the actual node are ALWAYS in the left branch, but the most importants
+            # are on the right branch
             if root.data > element:
                 self._insert(root.left, element)
             else:
                 self._insert(root.right, element)
+
+    def poll(self):
+        """ Returns and removes the element with the utmost priority. """
+        return self._poll(self.root)
+
+    def _poll(self, root):
+        """
+        'Private' method used by 'self.poll' to fetch the element.
+
+        In this structure, the most important element is always at the branch
+        with the highest 'degree', i.e. the first element visible from the right
+        side of the graph.
+        """
+        if self.isEmpty():
+            # If someone tries to poll from an empty queue...
+            return None
+        else:
+            if root.right != None:
+                # The actual node is not the most important one yet, so advance to the right
+                data = self._poll(root.right)
+                # If the actual node's right children does not have a right children, it means that
+                # it was the most important element, and it may has a left children; this children
+                # will be the most important one
+                if root.right.right == None:
+                    root.right = root.right.left
+                return data
+            else:
+                if root == self.root:
+                    # Consider a queue with one or two element as a unique case. In this case,
+                    # the root should be assigned the left children of the actual node
+                    temp = root.data
+                    self.root = root.left
+                    return temp
+                else:
+                    return root.data
+
+    def isEmpty(self):
+        return self.root == None
 
 class Movie:
     """
@@ -200,7 +257,7 @@ class Movie:
             year = "",
             genres = [],
             votes = "",
-            rating = "",
+            rating = "0.0",
             runtime = [],
             plot = [],
             coverUrl = ""):
@@ -214,10 +271,12 @@ class Movie:
         self.year = year
         self.genres = genres
         self.votes = votes
-        self.rating = rating
+        self.rating = float(rating)
         self.runtime = runtime
         self.plot = plot
         self.coverUrl = coverUrl
+
+        self.insertionTime = None # This field indicates the time it took the movie to be inserted in the store.
     
     def __cmp__(self, other):
         """ Comparator overloading. """
@@ -236,7 +295,7 @@ class Movie:
         else:
             directors = ', '.join(self.director)
 
-        return "%s | %s | %s | %s" % ( self.title, directors, self.year, self.rating )
+        return "%s | %s | %s | %s" % ( self.title, directors, self.insertionTime, self.rating )
     
     def parseArray(self, data):
         """ 
@@ -253,7 +312,7 @@ class Movie:
         self.year = data[7]
         self.genres = data[8]
         self.votes = data[9]
-        self.rating = data[10]
+        self.rating = float(data[10])
         self.runtime = data[11]
         self.plot = data[12]
         self.coverUrl = data[13]
@@ -322,7 +381,7 @@ class MovieStore:
         Given a string containing the name of the file, it tries to
         parse the file information, looking up for movies data.
         """
-        self.movies = PriorityQueue()
+        self.movies = LinkedListPriorityQueue()
 
         if filename != None:
             print "Loading movies from '%s'" % ( filename )
@@ -347,17 +406,26 @@ class MovieStore:
             except IOError:
                 print "Error while trying to read file:", filename
 
-    def insert(movie, movieStringData = false):
+    def insert(self, movie, movieStringData = False):
         """ Inserts a new movie. """
         if movieStringData:
             movie = Movie().importFromString(movie)
         self.movies.add(movie)
 
-    def getMoviesByRating(min, max):
+    def getMoviesByRating(self, min, max):
         """
         Returns an array containing the movies which rating
         is between 'min' and 'max'.
         """
+        showMovies = []
+        for movie in self.movies:
+            rating = movie.rating * 10
+            if rating <= max:
+                if rating >= min:
+                    showMovies.append(movie)
+            else:
+                break
+        return showMovies
 
 class MovieDisplay(Frame):
     """ This widget displays Movie information. """
@@ -385,6 +453,11 @@ class MovieDisplay(Frame):
         self.rating = Label(self, textvariable = self.ratingText)
         self.rating.grid(row = 3, column = 1)
 
+        self.insertionText = StringVar()
+        self.insertionLabel = Label(self, text = "Insertion: ").grid(row = 3, sticky = W)
+        self.insertion = Label(self, textvariable = self.insertionText)
+        self.insertion.grid(row = 3, column = 1)
+
         self.picture = Canvas(self, width = 100, height = 168, bg = "black")
         self.picture.grid(row = 0, column = 2, rowspan = 4, padx = 4)
         self.photoImage = None
@@ -401,13 +474,15 @@ class MovieDisplay(Frame):
             self.directorText.set(', '.join(movie.director))
         self.yearText.set(movie.year)
         self.ratingText.set(movie.rating)
+        self.insertionText.set(movie.insertionTime)
         self._setMoviePicture(movie.coverUrl)
 
     def clearImageCache(self):
         """
         It removes the image cache folder. Do not call if images are being used.
         """
-        shutil.rmtree("./cache/")
+        if os.path.exists("./cache/"):
+            shutil.rmtree("./cache/")
 
     def _setMoviePicture(self, imageUrl):
         """
@@ -442,6 +517,29 @@ class MovieDisplay(Frame):
 
         self.picture.create_rectangle(0, 0, 100, 168, fill = "black")
 
+class StatusBar(Frame):
+    """
+    Effbot's Simple Status Bar widget.
+
+    Take a look at: http://effbot.org/tkinterbook/tkinter-application-windows.htm
+    """
+    def __init__(self, master):
+        Frame.__init__(self, master)
+        self.label = Label(self, bd=1, relief=SUNKEN, anchor=W)
+        self.label.pack(fill=X)
+
+    def write(self, message):
+        self.clear()
+        self.set('%s', message)
+
+    def set(self, format, *args):
+        self.label.config(text=format % args)
+        self.label.update_idletasks()
+
+    def clear(self):
+        self.label.config(text="")
+        self.label.update_idletasks()
+
 class MovieApp(Frame):
     """
     Main application.
@@ -452,24 +550,53 @@ class MovieApp(Frame):
 
         print "WARNING: This program creates a folder named 'cache' where MovieApp will save movie covers."
 
-        self.movies = []           # An array containing the data of the movies
+        self.store = MovieStore()  # All the movies imported.
+
+        self._data = []            # A hidden field that stores all movie entries to be added afterwards.
+        self._impDataIndex = 0     # Index of the new movie to be imported.
+
+        self.movies = []           # An array containing a set of movies that adheres to the filters.
         self.currentMovieIndex = 0 # Index of the current movie being displayed.
+
+        self.lastJobTimeTaken = None
 
         self.movieDisplay = MovieDisplay(master)
         self.movieDisplay.grid(row = 0)
 
-        buttonFrame = Frame(master).grid(row = 1)
-        self.nextMovieButton = Button(buttonFrame, text = "Next Movie", command = self.nextMovie).grid(row = 1, column = 0, sticky = W)
-        self.addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 1, column = 1)
+        buttonFrame = Frame(master)
+        buttonFrame.grid(row = 1)
+        addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 1, column = 0)
+        nextMovieButton = Button(buttonFrame, text = "Next Movie", command = self.nextMovie).grid(row = 1, column = 1, sticky = W)
+
+        inputFrame = Frame(master)
+        inputFrame.grid(row = 2, pady = 16)
+        minRatingText = Label(inputFrame, text = "From: ").grid(row = 2, column = 0)
+        maxRatingText = Label(inputFrame, text = "To: ").grid(row = 3, column = 0)
+        self.minRatingInput = Entry(inputFrame)
+        self.minRatingInput.grid(row = 2, column = 1, sticky = W+E+N+S)
+        self.minRatingInput.bind('<Return>', self.updateMovieList)
+        self.maxRatingInput = Entry(inputFrame)
+        self.maxRatingInput.grid(row = 3, column = 1, sticky = W+E+N+S)
+        self.maxRatingInput.bind('<Return>', self.updateMovieList)
 
         master.protocol("WM_DELETE_WINDOW", self.onApplicationClose)
 
-        self.showMovie()
+        self.statusBar = StatusBar(master)
+        self.statusBar.grid(row = 4, sticky = W+E+N+S)
+
+        try:
+            f = open('peliculas100.dat', 'r')
+            self._data = f.readlines()
+            f.close()
+        except IOError:
+            print "Error while trying to read file:", 'peliculas100.dat'
+
+        #self.showMovie()
     
     def showMovie(self):
         """ Displays the current movie. """
         try:
-            print self.movies[self.currentMovieIndex]
+            self.updateStatusBar()
             self.movieDisplay.setMovie(self.movies[self.currentMovieIndex])
         except IndexError:
             print "Movie information at index '%d' is not available." % ( self.currentMovieIndex )
@@ -479,8 +606,59 @@ class MovieApp(Frame):
         Displays the movie next to the current one. Notice that if the last
         movie is being displayed, the next movie will be the first one.
         """
+        self.currentMovieIndex += 1
+        if self.currentMovieIndex >= len(self.movies):
+            self.currentMovieIndex = 0
+
+        self.showMovie()
 
     def addMovie(self):
+        """ Adds a movie. """
+        if self._impDataIndex < len(self._data):
+            movie = Movie()
+            movie.importFromString(self._data[self._impDataIndex])
+
+            print "Adding movie '%s'..." % ( movie.title )
+            
+            start = time.clock() * 1000000
+            self.store.insert(movie)
+            end = time.clock() * 1000000
+            movie.insertionTime = int(end - start)
+
+            self.lastJobTimeTaken = end - start
+            self._impDataIndex += 1
+            self.updateMovieList(None)
+        else:
+            print "No more movies available."
+
+    def updateMovieList(self, event):
+        """ Updates the movie list. """
+        min, max = self.getValidInputs()
+
+        self.currentMovieIndex = 0
+        self.movies = self.store.getMoviesByRating(min, max)
+
+        self.showMovie()
+
+    def updateStatusBar(self):
+        text = "%d/%d (%s)" % ( self.currentMovieIndex + 1, len(self.movies), self.lastJobTimeTaken )
+        self.statusBar.write(text)
+
+    def getValidInputs(self):
+        min = self.minRatingInput.get()
+        max = self.maxRatingInput.get()
+
+        try:
+            float(min)
+        except ValueError:
+            min = 0
+
+        try:
+            float(max)
+        except ValueError:
+            max = 100
+
+        return min, max
 
     def onApplicationClose(self):
         """
