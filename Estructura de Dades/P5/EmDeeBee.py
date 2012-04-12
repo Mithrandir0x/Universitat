@@ -36,6 +36,7 @@ class Queue:
         """ When constructed, the queue is empty. """
         self.head = None
         self.tail = None
+        self.size = 0
 
     def __str__(self):
         """ Returns a string representation of the queue's content. """
@@ -60,6 +61,10 @@ class Queue:
             yield node.data
             node = node.right
 
+    def __len__(self):
+        """ Returns the size of the queue. """
+        return self.size
+
     def isEmpty(self):
         """ Returns whether the queue is empty or not. """
         return self.head == None and self.tail == None
@@ -75,6 +80,7 @@ class Queue:
             temp = Node(data, self.head)
             self.head.left = temp
             self.head = temp
+        self.size += 1
 
     def remove(self):
         """
@@ -96,6 +102,8 @@ class Queue:
             # Remove the tail
             self.tail = self.tail.prev
             self.tail.next = None
+
+        self.size -= 1
 
         return temp
 
@@ -125,6 +133,7 @@ class LinkedListPriorityQueue(Queue):
             self.head = self.tail
         else:
             self._add(self.head, data)
+        self.size += 1
 
     def _add(self, node, data):
         """
@@ -374,7 +383,8 @@ class Movie:
 
 class MovieStore:
     """
-    Internal structure to store movie information.
+    This class acts as a storage and at the same time a Data Access Object
+    to provide information about the movie.
     """
     def __init__(self, filename = None):
         """
@@ -390,19 +400,8 @@ class MovieStore:
                 filmEntries = f.readlines()
                 f.close()
 
-                movieData = []
                 for entry in filmEntries:
-                    fields = entry.split("|")
-                    for field in fields:
-                        if ( field.find("&&") != -1 ):
-                            composedField = field.rstrip().split("&&")
-                            movieData.append(composedField)
-                        else:
-                            movieData.append(field.rstrip())
-                    movie = Movie()
-                    movie.parseArray(movieData)
-                    self.movies.add(movie)
-                    movieData = []
+                    self.insert(entry, true)
             except IOError:
                 print "Error while trying to read file:", filename
 
@@ -419,13 +418,18 @@ class MovieStore:
         """
         showMovies = []
         for movie in self.movies:
-            rating = movie.rating * 10
+            rating = int(movie.rating * 10)
             if rating <= max:
                 if rating >= min:
                     showMovies.append(movie)
             else:
                 break
+        print len(showMovies)
         return showMovies
+
+    def size(self):
+        """ Returns the amount of movies stored. """
+        return len(self.movies)
 
 class MovieDisplay(Frame):
     """ This widget displays Movie information. """
@@ -451,12 +455,12 @@ class MovieDisplay(Frame):
         self.ratingText = StringVar()
         self.ratingLabel = Label(self, text = "Rating: ").grid(row = 3, sticky = W)
         self.rating = Label(self, textvariable = self.ratingText)
-        self.rating.grid(row = 3, column = 1)
+        self.rating.grid(row = 3, column = 1)   
 
         self.insertionText = StringVar()
-        self.insertionLabel = Label(self, text = "Insertion: ").grid(row = 3, sticky = W)
+        self.insertionLabel = Label(self, text = "Insertion: ").grid(row = 4, sticky = W)
         self.insertion = Label(self, textvariable = self.insertionText)
-        self.insertion.grid(row = 3, column = 1)
+        self.insertion.grid(row = 4, column = 1)
 
         self.picture = Canvas(self, width = 100, height = 168, bg = "black")
         self.picture.grid(row = 0, column = 2, rowspan = 4, padx = 4)
@@ -476,6 +480,14 @@ class MovieDisplay(Frame):
         self.ratingText.set(movie.rating)
         self.insertionText.set(movie.insertionTime)
         self._setMoviePicture(movie.coverUrl)
+
+    def reset(self):
+        self.titleText.set("")
+        self.directorText.set("")
+        self.yearText.set("")
+        self.ratingText.set("")
+        self.insertionText.set("")
+        self.clearMoviePicture()
 
     def clearImageCache(self):
         """
@@ -515,6 +527,9 @@ class MovieDisplay(Frame):
         except IOError:
             print "Unable to retrieve the movie image."
 
+        self.clearMoviePicture()
+
+    def clearMoviePicture(self):
         self.picture.create_rectangle(0, 0, 100, 168, fill = "black")
 
 class StatusBar(Frame):
@@ -550,21 +565,22 @@ class MovieApp(Frame):
 
         print "WARNING: This program creates a folder named 'cache' where MovieApp will save movie covers."
 
-        self.store = MovieStore()  # All the movies imported.
+        self.store = MovieStore()  # This is where all the movies are stored.
 
-        self._data = []            # A hidden field that stores all movie entries to be added afterwards.
+        self._data = []            # A hidden field that stores all movie entries to be added afterwards with add button.
         self._impDataIndex = 0     # Index of the new movie to be imported.
 
-        self.movies = []           # An array containing a set of movies that adheres to the filters.
+        self.movies = []           # An array of the movies loaded from the store.
         self.currentMovieIndex = 0 # Index of the current movie being displayed.
 
-        self.lastJobTimeTaken = None
+        self.lastJobTimeTaken = None  # It indicates how much time has taken to add a new movie.
+        self.lastFilteringTime = None # It indicates how much time has taken to get the filtered list of movies.
 
         self.movieDisplay = MovieDisplay(master)
         self.movieDisplay.grid(row = 0)
 
         buttonFrame = Frame(master)
-        buttonFrame.grid(row = 1)
+        buttonFrame.grid(row = 1, pady = 8)
         addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 1, column = 0)
         nextMovieButton = Button(buttonFrame, text = "Next Movie", command = self.nextMovie).grid(row = 1, column = 1, sticky = W)
 
@@ -599,6 +615,7 @@ class MovieApp(Frame):
             self.updateStatusBar()
             self.movieDisplay.setMovie(self.movies[self.currentMovieIndex])
         except IndexError:
+            self.movieDisplay.reset()
             print "Movie information at index '%d' is not available." % ( self.currentMovieIndex )
 
     def nextMovie(self):
@@ -625,6 +642,8 @@ class MovieApp(Frame):
             end = time.clock() * 1000000
             movie.insertionTime = int(end - start)
 
+            print "Time taken:", movie.insertionTime
+
             self.lastJobTimeTaken = end - start
             self._impDataIndex += 1
             self.updateMovieList(None)
@@ -633,28 +652,33 @@ class MovieApp(Frame):
 
     def updateMovieList(self, event):
         """ Updates the movie list. """
-        min, max = self.getValidInputs()
+        min, max = self.getValidRatingInputs()
 
         self.currentMovieIndex = 0
+        start = time.clock() * 1000000
         self.movies = self.store.getMoviesByRating(min, max)
+        end = time.clock() * 1000000
+        self.lastFilteringTime = end - start
 
         self.showMovie()
 
     def updateStatusBar(self):
-        text = "%d/%d (%s)" % ( self.currentMovieIndex + 1, len(self.movies), self.lastJobTimeTaken )
+        """ Updates the status bar text with some statistics. """
+        text = "%d/%d (%d) (Last Addition: %sms / Last Filtering: %sms)" % ( self.currentMovieIndex + 1, len(self.movies), self.store.size(), self.lastJobTimeTaken, self.lastFilteringTime )
         self.statusBar.write(text)
 
-    def getValidInputs(self):
+    def getValidRatingInputs(self):
+        """ Returns the valid minimum and maximum of rating to be accepted. """
         min = self.minRatingInput.get()
         max = self.maxRatingInput.get()
 
         try:
-            float(min)
+            min = int(min)
         except ValueError:
             min = 0
 
         try:
-            float(max)
+            max = int(max)
         except ValueError:
             max = 100
 
