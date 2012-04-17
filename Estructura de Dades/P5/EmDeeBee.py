@@ -122,6 +122,9 @@ class LinkedListPriorityQueue(Queue):
 
     The priority of the elements is evaluated by their own comparator implementation.
     """
+    # A little explanation about why a double-linked queue implementation is used. Although
+    # it is totally possible to do it with a single link queue implementation is possible,
+    # it seemed for me more natural and convenient.
     def add(self, data):
         """
         @Overrides
@@ -144,10 +147,11 @@ class LinkedListPriorityQueue(Queue):
         'Private' recursive method called by 'self.add'.
 
         It iterates over every element in the queue until it finds the right
-        spot where the new 'data' must be inserted.
+        spot where the new 'data' must be inserted and updates the 'head' 
+        or 'tail' whenever it is necessary.
 
-        Obviously, this method updates the 'head' or 'tail' whenever it is
-        necessary.
+        Normally, this method should not return a Node element, but it is
+        needed by the MovieStore class to let walk through the structure.
         """
         if data > node.data:
             if node.right == None:
@@ -205,16 +209,15 @@ class Movie:
         self.plot = plot
         self.coverUrl = coverUrl
 
-        self.insertionTime = None # This field indicates the time it took the movie to be inserted in the store.
-
     def __ne__(self, other):
+        """ Not Equal comparator override needed to treat None as special case. """
         if other != None:
             return self != other
         else:
             return True
 
     def __eq__(self, other):
-        """ Equal comparator overriding. """
+        """ Equal comparator override needed to treat None as special case. """
         if other != None:
             return self == other
         else:
@@ -316,8 +319,8 @@ class Movie:
 
 class MovieStore:
     """
-    This class acts as a storage and at the same time a Data Access Object
-    to provide information about the movie.
+    This class is in charge of saving all the movies, and walking through each of the
+    records available and withing the specified range of rating.
     """
     def __init__(self, filename = None):
         """
@@ -326,12 +329,10 @@ class MovieStore:
         """
         self.movies = LinkedListPriorityQueue()
 
-        self._filterRatingMin = 0
-        self._filterRatingMax = 100
-        self._startingMovie = None  # A reference to the movie with the lowest rating
-        self._currentMovie = None   # A reference to the movie being accessed
-        self._bm_insertTime = None
-        self._bm_update = None
+        self._filterRatingMin = 0   # The minimal value that a movie's rating could have.
+        self._filterRatingMax = 100 # The maximum value that a movie's rating could have.
+        self._startingMovie = None  # A reference to the movie with the lowest rating, depending on '_filterRatingMin'.
+        self._currentMovie = None   # A reference to the movie pointed by MovieStore.
 
         if filename != None:
             print "Loading movies from '%s'" % ( filename )
@@ -346,53 +347,66 @@ class MovieStore:
                 print "Error while trying to read file:", filename
 
     def insert(self, movie, movieStringData = False):
-        """ Inserts a new movie. """
+        """ Inserts a new movie in the store, and updates its movie pointer. """
         if movieStringData:
             movie = Movie().importFromString(movie)
 
+        # Set the current movie to the new one being added, and
+        # update starting and current movie pointers.
         self._currentMovie = self.movies.add(movie)
-        self.updateMoviePointers(self._startingMovie == None)
+        self._updateMoviePointers(self._startingMovie == None)
 
         # Update auxiliary starting movie pointer to the new movie being added,
         # if this movie has a lower rate and is inside the demanded threshold.
         if self._startingMovie != None and self._startingMovie.data.rating > movie.rating and ( movie.rating * 10 ) > self._filterRatingMin:
             self._startingMovie = self._currentMovie
 
-        """
-        if self._currentMovie != None:
-            print self._currentMovie.data.rating, movie.rating, self._filterRatingMin
-            if self._currentMovie.data.rating > movie.rating and movie.rating > self._filterRatingMin:
-                self._startingMovie = pQueueReference"""
-
     def setRatingFilter(self, min, max):
+        """
+        This method updates the minimal and maximum rating that filters the movies
+        being showed.
+        """
+        # If any of the old values differ with the new ones, then the movie record pointer is updated.
         update = self._filterRatingMin != min or self._filterRatingMax != max
         self._filterRatingMin, self._filterRatingMax = min, max
         if update:
-            self.updateMoviePointers(True)
+            self._updateMoviePointers(True)
 
     def getCurrentMovie(self):
+        """ It returns the movie currently selected or None if not available. """
         if self._currentMovie != None:
             return self._currentMovie.data
         else:
             return None
 
     def getNextMovie(self):
+        """ It returns the movie next to the current one. """
         if self._currentMovie != None:
             if self._currentMovie.right != None:
+                # Check whether there's a movie next to the current one and meets the rating
+                # filter values. If so, advance, else, go back to the beginning.
                 if ( self._currentMovie.right.data.rating * 10 ) <= self._filterRatingMax:
                     self._currentMovie = self._currentMovie.right
                 else:
                     self._currentMovie = self._startingMovie
             else:
+                # If there's no movie next to the current one, go back to the beginning.
                 self._currentMovie = self._startingMovie
 
             return self._currentMovie.data
         else:
             return None
 
-    def updateMoviePointers(self, updateStartingMoviePointer):
+    def _updateMoviePointers(self, updateStartingMoviePointer = False):
+        """
+        'Private' method. When called, it updates the starting movie pointer, and also checks
+        if the current movie pointer is referencing to the right movie, depending on the
+        rating minimum and maximum values.
+        """
         if updateStartingMoviePointer:
-            print updateStartingMoviePointer
+            # Walk through all the nodes of the priority queue until the movie with
+            # the lowest rating and higher than '_filterRatingMin' is found, and
+            # update the '_startingMovie' pointer.
             node = self.movies.head
             self._startingMovie = None
             while node != None:
@@ -403,10 +417,19 @@ class MovieStore:
                 node = node.right
 
         if self._currentMovie != None:
+            # Verify that the current movie has a rating within the range specified
+            # by '_filterRatingMin' and '_filterRatingMax', and change it to the
+            # starting one if the current movie doesn't meet the range.
             rating = self._currentMovie.data.rating
             if rating > self._filterRatingMax or rating < self._filterRatingMin:
                 self._currentMovie = self._startingMovie
         else:
+            # The current movie pointer can be None if an invalid or impossible range
+            # is specified.
+            # For example, if the rating values are specified to 0/0, then
+            # even if there are movies stored, no one will meet this range, and won't be
+            # showed. But, if then a valid range is specified, and no movie has been
+            # selected, simply select the starting one.
             self._currentMovie = self._startingMovie
 
     def size(self):
@@ -550,10 +573,10 @@ class MovieApp(Frame):
 
         print "WARNING: This program creates a folder named 'cache' where MovieApp will save movie covers."
 
-        self.store = MovieStore()  # This is where all the movies are stored.
+        self.store = MovieStore()     # This is where all the movies are stored.
 
-        self._data = []            # A hidden field that stores all movie entries to be added afterwards with add button.
-        self._impDataIndex = 0     # Index of the new movie to be imported.
+        self._data = []               # A hidden field that stores all movie entries to be added afterwards with add button.
+        self._impDataIndex = 0        # Index of the new movie to be imported.
 
         self.lastJobTimeTaken = None  # It indicates how much time has taken to add a new movie.
         self.lastFilteringTime = None # It indicates how much time has taken to get the filtered list of movies.
@@ -625,7 +648,10 @@ class MovieApp(Frame):
             print "No more movies available."
 
     def updateMovieList(self, event):
-        """ Updates the movie list. """
+        """
+        Updates the movie list. Called when a new movie is added, or any of the rating input fields
+        have been updated.
+        """
         min, max = self.getValidRatingInputs()
 
         start = time.clock() * 1000000
@@ -646,7 +672,7 @@ class MovieApp(Frame):
         self.statusBar.write(text)
 
     def getValidRatingInputs(self):
-        """ Returns the valid minimum and maximum of rating to be accepted. """
+        """ Returns the valid minimum and maximum integer values of rating to be accepted. """
         min = self.minRatingInput.get()
         max = self.maxRatingInput.get()
 
