@@ -58,7 +58,7 @@ class Queue:
         """ 'Private' This method is a python's generator used to iterate the queue. """
         node = self.head
         while node != None:
-            yield node.data
+            yield node
             node = node.right
 
     def __len__(self):
@@ -174,34 +174,62 @@ class LinkedListPriorityQueue(Queue):
                 node.left = newNode
             return newNode
 
-class DegeneratedTreePriorityQueue:
+class Tree:
     """
-    Implementation of a PriorityQueue based on a degenerated tree.
+    The core implementation of a tree. It is an 'abstract' class to be used
+    by any other custom implementation of the tree, and serves some utility
+    methods such as iterators and string representation of the tree.
 
-    Adding elements has O(n) complexity.
-    Removing elements has O(n) complexity.
+    Though other core methods such as adding or removing from the tree are
+    not defined, it should be said that any method that offers interaction 
+    with the tree should abide to this loose 'contract':
+
+        * def add(element)  (For adding elements to the tree)
+        * def peek()        (For watching the element with the top-most priority without removing it)
+        * def poll()        (For getting the element with the top-most priority and removing it)
+
+    Not designed to be instanced.
     """
     def __init__(self):
+        """
+        Class constructor.
+        """
         self.root = None
-        self.depth = 0
+        self.depth = None
+        self.size = None
 
-    def add(self, element):
-        return self._add(self.root, element, 1)
+    def __str__(self):
+        """ Returns a string representation of the tree's content in inorder. """
+        width = 0
+        for node in self:
+            print "(%d, %d) %s" % ( -1, width, node )
+            width += 1
 
-    def _add(self, root, element, currentDepth):
+    def __len__(self):
+        """ Returns the amount of nodes inside the tree. """
+        return self.size
+
+    def __iter__(self):
+        """ Returns a python's generator object. It iterates the tree in inorder. """
+        return self._next(self.root)
+
+    def _next(self, parent):
         """
-        'Private' recursive method used by 'self.add' to add an element in the queue.
+        'Protected' method that returns the generator. This is where the real
+        iteration is done and each time a new item is required by an iterator, 
+        this method will be called.
         """
-        if root == None:
-            root = Node()
-            root.data = element
-            if currentDepth > self.depth:
-                self.depth = currentDepth
-            return root
-        else:
-            return self._add(root.right, element, currentDepth + 1)
+        if parent != None:
+            for child in parent.left:
+                yield self._next(child)
+            yield parent
+            for child in parent.right:
+                yield self._next(child)
 
-class BinarySearchTreePriorityQueue:
+    def isEmpty(self):
+        return self.root == None
+
+class BinarySearchTreePriorityQueue(Tree):
     """
     Implementation of a PriorityQueue based on a binary search tree.
 
@@ -213,25 +241,11 @@ class BinarySearchTreePriorityQueue:
 
     The priority of the elements is evaluated by their own comparator implementation.
     """
-    def __init__(self):
-        self.root = None
-        self.depth = 0
-
-    def __iter__(self):
-        """ Returns a python's iterator. """
-        return self._next(self.root)
-
-    def _next(self, node):
-        """ Iterator function """
-        if node != None:
-            if node.left != None:
-                self._next(node.left)
-            yield node.data
-            if node.right != None:
-                self._next(node.right)
-
     def add(self, element):
-        """ Adds the element to the priority queue. """
+        """
+        Adds the element to the priority queue and returns the node
+        reference in the tree structure.
+        """
         return self._add(self.root, element, 1)
 
     def _add(self, root, element, currentDepth):
@@ -252,44 +266,6 @@ class BinarySearchTreePriorityQueue:
                 return self._add(root.left, element, currentDepth + 1)
             else:
                 return self._add(root.right, element, currentDepth + 1)
-
-    def poll(self):
-        """ Returns and removes the element with the utmost priority. """
-        return self._poll(self.root)
-
-    def _poll(self, root):
-        """
-        'Private' method used by 'self.poll' to fetch the element.
-
-        In this structure, the most important element is always at the branch
-        with the highest 'degree', i.e. the first element visible from the right
-        side of the graph.
-        """
-        if self.isEmpty():
-            # If someone tries to poll from an empty queue...
-            return None
-        else:
-            if root.right != None:
-                # The actual node is not the most important one yet, so advance to the right
-                data = self._poll(root.right)
-                # If the actual node's right children does not have a right children, it means that
-                # it was the most important element, and it may has a left children; this children
-                # will be the most important one
-                if root.right.right == None:
-                    root.right = root.right.left
-                return data
-            else:
-                if root == self.root:
-                    # Consider a queue with one or two element as a unique case. In this case,
-                    # the root should be assigned the left children of the actual node
-                    temp = root.data
-                    self.root = root.left
-                    return temp
-                else:
-                    return root.data
-
-    def isEmpty(self):
-        return self.root == None
 
 class Movie:
     """
@@ -357,7 +333,7 @@ class Movie:
         else:
             directors = ', '.join(self.director)
 
-        return "%s | %s | %s | %s" % ( self.title, directors, self.insertionTime, self.rating )
+        return "%s | %s | %s" % ( self.title, directors, self.rating )
     
     def parseArray(self, data):
         """ 
@@ -380,10 +356,7 @@ class Movie:
         self.coverUrl = data[13]
 
     def importFromString(self, movieString):
-        """
-        This method tries to parse the given string to get the movie data
-        from it.
-        """
+        """ This method tries to parse the given string to get the movie data from it. """
         data = []
         fields = movieString.split("|")
         for field in fields:
@@ -396,9 +369,7 @@ class Movie:
         self.parseArray(data)
 
     def exportAsArray(self):
-        """
-        Returns a multi-sized array containing the movie information.
-        """
+        """ Returns a multi-sized array containing the movie information. """
         data = []
         data.append(self.title)
         data.append(self.director)
@@ -437,7 +408,7 @@ class Movie:
 class MovieStore:
     """
     This class is in charge of saving all the movies, and walking through each of the
-    records available and withing the specified range of rating.
+    records available and withing the specified range of ratingself.
     """
     def __init__(self, filename = None):
         """
@@ -445,10 +416,6 @@ class MovieStore:
         parse the file information, looking up for movies data.
         """
         self.movies = LinkedListPriorityQueue()
-
-        # Only used for benchmarking purposes
-        self._degenerateTree = DegeneratedTreePriorityQueue()
-        self._binarySearchTree = BinarySearchTreePriorityQueue()
 
         self._filterRatingMin = 0   # The minimal value that a movie's rating could have.
         self._filterRatingMax = 100 # The maximum value that a movie's rating could have.
@@ -463,14 +430,16 @@ class MovieStore:
                 f.close()
 
                 for entry in filmEntries:
-                    self.insert(entry, true)
+                    self.insert(entry, True)
             except IOError:
                 print "Error while trying to read file:", filename
 
     def insert(self, movie, movieStringData = False):
         """ Inserts a new movie in the store, and updates its movie pointer. """
         if movieStringData:
-            movie = Movie().importFromString(movie)
+            data = movie
+            movie = Movie()
+            movie.importFromString(data)
 
         # Set the current movie to the new one being added, and
         # update starting and current movie pointers.
@@ -482,18 +451,11 @@ class MovieStore:
         if self._startingMovie != None and self._startingMovie.data.rating > movie.rating and ( movie.rating * 10 ) > self._filterRatingMin:
             self._startingMovie = self._currentMovie
 
-    def insertDegenerateTree(self, movie):
-        self._degenerateTree.add(movie)
-
-    def insertBinarySearchTree(self, movie):
-        self._binarySearchTree.add(movie)
-
-    def setRatingFilter(self, min, max):
+    def setRatingFilter(self, min = 0, max = 100):
         """
         This method updates the minimal and maximum rating that filters the movies
         being showed.
         """
-        # If any of the old values differ with the new ones, then the movie record pointer is updated.
         update = self._filterRatingMin != min or self._filterRatingMax != max
         self._filterRatingMin, self._filterRatingMax = min, max
         if update:
@@ -506,8 +468,17 @@ class MovieStore:
         else:
             return None
 
+    def getMovie(self, index):
+        """ Gets a movie from the supplied index. """
+        i = 0
+        movie = None
+        for node in self.movies:
+            if i == index:
+                return node.data
+            i += 1
+
     def getNextMovie(self):
-        """ It returns the movie next to the current one. """
+        """ It returns the movie next to the current one, and sets it as the current one. """
         if self._currentMovie != None:
             if self._currentMovie.right != None:
                 # Check whether there's a movie next to the current one and meets the rating
@@ -526,22 +497,12 @@ class MovieStore:
 
     def _updateMoviePointers(self, updateStartingMoviePointer = False):
         """
-        'Private' method. When called, it updates the starting movie pointer, and also checks
+        'Protected' method. When called, it updates the starting movie pointer, and also checks
         if the current movie pointer is referencing to the right movie, depending on the
         rating minimum and maximum values.
         """
         if updateStartingMoviePointer:
-            # Walk through all the nodes of the priority queue until the movie with
-            # the lowest rating and higher than '_filterRatingMin' is found, and
-            # update the '_startingMovie' pointer.
-            node = self.movies.head
-            self._startingMovie = None
-            while node != None:
-                rating = int(node.data.rating * 10)
-                if rating >= self._filterRatingMin and rating <= self._filterRatingMax:
-                    self._startingMovie = node
-                    break
-                node = node.right
+            self._updateStartingMoviePointer()
 
         if self._currentMovie != None:
             # Verify that the current movie has a rating within the range specified
@@ -551,13 +512,25 @@ class MovieStore:
             if rating > self._filterRatingMax or rating < self._filterRatingMin:
                 self._currentMovie = self._startingMovie
         else:
-            # The current movie pointer can be None if an invalid or impossible range
-            # is specified.
+            # The current movie pointer can be None if an invalid or impossible range is specified.
             # For example, if the rating values are specified to 0/0, then
             # even if there are movies stored, no one will meet this range, and won't be
             # showed. But, if then a valid range is specified, and no movie has been
             # selected, simply select the starting one.
             self._currentMovie = self._startingMovie
+
+    def _updateStartingMoviePointer(self):
+        """
+        'Protected' method. Walk through all the nodes of the priority queue until
+        the movie with the lowest rating and higher than '_filterRatingMin' is found,
+        and update the '_startingMovie' pointer.
+        """
+        self._startingMovie = None
+        for node in self.movies:
+            rating = int(node.data.rating * 10)
+            if rating >= self._filterRatingMin and rating <= self._filterRatingMax:
+                self._startingMovie = node
+                break
 
     def size(self):
         """ Returns the amount of movies stored. """
@@ -734,39 +707,49 @@ class MovieApp(Frame):
         """ Film data is loaded (sorted by title), and the GUI is loaded. """
         Frame.__init__(self, master)
 
-        innerFrame = Frame(master)
-        innerFrame.grid(row = 0)
-
         print "WARNING: This program creates a folder named 'cache' where MovieApp will save movie covers."
 
-        self.store = MovieStore()     # This is where all the movies are stored.
+        self.store = MovieStore('peliculas100.dat')     # This is where all the movies are stored.
+
+        print self.store._currentMovie
+
+        # self.storeBalanced = MovieStoreTree()    # 
+        # self.storeUnbalanced = MovieStoreTree()  # 
 
         self._data = []               # A hidden field that stores all movie entries to be added afterwards with add button.
         self._impDataIndex = 0        # Index of the new movie to be imported.
 
-        self.lastJobTimeTaken = None  # It indicates how much time has taken to add a new movie.
-        self.lastFilteringTime = None # It indicates how much time has taken to get the filtered list of movies.
+        self.lastJobTimeTaken = -1.0  # It indicates how much time has taken to add a new movie.
+        self.lastFilteringTime = -1.0 # It indicates how much time has taken to get the filtered list of movies.
 
+        # UI/Private frame where all elements but the Status Bar are added
+        innerFrame = Frame(master)
+        innerFrame.grid(row = 0)
+
+        # UI/Movie Display
         self.movieDisplay = MovieDisplay(innerFrame)
         self.movieDisplay.grid(row = 0)
 
+        # UI/Benchmark Display
         self.benchmarkDisplay = BenchmarkDisplay(innerFrame)
-        self.benchmarkDisplay.grid(row = 0, column = 1)
+        self.benchmarkDisplay.grid(row = 1, pady = 8)
 
+        # UI/Buttons
         buttonFrame = Frame(innerFrame)
-        buttonFrame.grid(row = 1, pady = 8)
+        buttonFrame.grid(row = 2, pady = 8)
         addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 1, column = 0)
         nextMovieButton = Button(buttonFrame, text = "Next Movie", command = self.nextMovie).grid(row = 1, column = 1, sticky = W)
 
+        # UI/Inputs
         inputFrame = Frame(innerFrame)
-        inputFrame.grid(row = 2, pady = 16)
-        minRatingText = Label(inputFrame, text = "From: ").grid(row = 2, column = 0)
-        maxRatingText = Label(inputFrame, text = "To: ").grid(row = 3, column = 0)
+        inputFrame.grid(row = 3, pady = 16)
+        minRatingText = Label(inputFrame, text = "From: ").grid(row = 0, column = 0)
+        maxRatingText = Label(inputFrame, text = "To: ").grid(row = 1, column = 0)
         self.minRatingInput = Entry(inputFrame)
-        self.minRatingInput.grid(row = 2, column = 1, sticky = W+E+N+S)
+        self.minRatingInput.grid(row = 0, column = 1, sticky = W+E+N+S)
         self.minRatingInput.bind('<Return>', self.updateMovieList)
         self.maxRatingInput = Entry(inputFrame)
-        self.maxRatingInput.grid(row = 3, column = 1, sticky = W+E+N+S)
+        self.maxRatingInput.grid(row = 1, column = 1, sticky = W+E+N+S)
         self.maxRatingInput.bind('<Return>', self.updateMovieList)
 
         master.protocol("WM_DELETE_WINDOW", self.onApplicationClose)
@@ -780,6 +763,8 @@ class MovieApp(Frame):
             f.close()
         except IOError:
             print "Error while trying to read file:", 'peliculas100.dat'
+
+        self.updateStatusBar()
     
     def showMovie(self, movie):
         """ Displays the current movie. """
@@ -791,6 +776,13 @@ class MovieApp(Frame):
         Displays the movie next to the current one. Notice that if the last
         movie is being displayed, the next movie will be the first one.
         """
+        min, max = self.getValidRatingInputs()
+
+        start = time.clock() * 1000000
+        self.store.setRatingFilter(min, max)
+        end = time.clock() * 1000000
+        self.benchmarkDisplay.linked.set(end - start)
+        
         movie = self.store.getNextMovie()
 
         self.showMovie(movie)
@@ -803,20 +795,23 @@ class MovieApp(Frame):
 
             print "Adding movie '%s'..." % ( movie.title )
 
-            self.insertMovieBenchmark(movie, self.store.insert, self.benchmarkDisplay.linked.set)
+            start = time.clock() * 1000000
+            self.store.insert(movie)
+            end = time.clock() * 1000000
+            self.benchmarkDisplay.linked.set(end - start)
+
+            """
+            self._benchmarkMovieStoreCall(self.benchmarkDisplay.degeneratedTree.set, self.storeUnbalanced.insert, movie)
+            self.benchmarkDisplay.degeneratedTreeDepth.set(self.storeUnbalanced.getDepth())
+
+            self._benchmarkMovieStoreCall(self.benchmarkDisplay.binarySearchTreeDepth.set, self.storeBalanced.insert, movie)
+            self.benchmarkDisplay.binarySearchTreeDepth.set(self.storeBalanced.getDepth())
+            """
 
             self._impDataIndex += 1
             self.updateMovieList(None)
         else:
             print "No more movies available."
-
-    def insertMovieBenchmark(self, movie, callbackInsert, callbackSet):
-        start = time.clock() * 1000000
-        callbackInsert(movie)
-        end = time.clock() * 1000000
-        self.lastJobTimeTaken = end - start
-        callbackSet(end - start)
-
 
     def updateMovieList(self, event):
         """
@@ -828,7 +823,7 @@ class MovieApp(Frame):
         start = time.clock() * 1000000
         self.store.setRatingFilter(min, max)
         end = time.clock() * 1000000
-        self.lastFilteringTime = end - start
+        self.benchmarkDisplay.linked.set(end - start)
 
         movie = self.store.getCurrentMovie()
         if movie == None:
@@ -837,9 +832,20 @@ class MovieApp(Frame):
         else:
             self.showMovie(movie)
 
+    def _benchmarkMovieStoreCall(self, benchmarkDisplayCallback, movieStoreCallback, *movieStoreCallbackArguments):
+        """
+        'Private' helper method that calculates the time required to interactuate with the
+        Movie Store.
+        """
+        start = time.clock() * 1000000
+        movieStoreCallback(movieStoreCallbackArguments)
+        end = time.clock() * 1000000
+        self.lastJobTimeTaken = end - start
+        benchmarkDisplayCallback(self.lastJobTimeTaken)
+
     def updateStatusBar(self):
         """ Updates the status bar text with some statistics. """
-        text = "(#: %d) (Last Addition: %.3fms / Last Filtering: %.3fms)" % ( self.store.size(), self.lastJobTimeTaken, self.lastFilteringTime )
+        text = "#: %d" % ( self.store.size() )
         self.statusBar.write(text)
 
     def getValidRatingInputs(self):
