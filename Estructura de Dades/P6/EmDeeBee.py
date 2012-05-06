@@ -536,6 +536,10 @@ class MovieStoreTree:
     def getNextMovie(self):
         """ It returns the movie next to the current one, and sets it as the current one. """
         if self._updateMovieList:
+            # Every time a movie is added, or the filter range is changed, a new temporal
+            # list of movies must be created, thus decreasing performance when getting the
+            # next movie.
+            # But calling again to fetch a new movie will perform faster.
             self._filteredMovieIndex = -1
             self._filteredMovieList = []
             for node in self.movies:
@@ -683,20 +687,20 @@ class BenchmarkDisplay(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
 
-        self.linked = OutputLabel(self, "\"LINKED\" cost:", 0)
+        self.linked = OutputLabel(self, "\"LINKED\" COST:", 0)
         self.linked.grid(row = 0, sticky = W+E)
 
-        self.degeneratedTree = OutputLabel(self, "\"DEGENERATED TREE\" cost:", 0)
-        self.degeneratedTree.grid(row = 1, sticky = W+E)
+        self.binarySearchTree = OutputLabel(self, "\"ABB ORIGINAL\" COST:", 0)
+        self.binarySearchTree.grid(row = 1, sticky = W+E)
 
-        self.binarySearchTree = OutputLabel(self, "\"BINARY SEARCH TREE\" cost:", 0)
-        self.binarySearchTree.grid(row = 2, sticky = W+E)
+        self.degeneratedTree = OutputLabel(self, "\"ABB ORDERED\" COST:", 0)
+        self.degeneratedTree.grid(row = 2, sticky = W+E)
 
-        self.degeneratedTreeDepth = OutputLabel(self, "\"DEGENERATED TREE\" depth:", 0)
-        self.degeneratedTreeDepth.grid(row = 3, sticky = W+E)
+        self.binarySearchTreeDepth = OutputLabel(self, "DEPTH ABB ORIGINAL:", 0)
+        self.binarySearchTreeDepth.grid(row = 3, sticky = W+E)
 
-        self.binarySearchTreeDepth = OutputLabel(self, "\"BINARY SEARCH TREE\" depth:", 0)
-        self.binarySearchTreeDepth.grid(row = 4, sticky = W+E)
+        self.degeneratedTreeDepth = OutputLabel(self, "DEPTH ABB ORDERED:", 0)
+        self.degeneratedTreeDepth.grid(row = 4, sticky = W+E)
 
 class StatusBar(Frame):
     """
