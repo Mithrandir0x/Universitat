@@ -149,13 +149,37 @@ class BinaryHeap:
         self.size += 1
         self.depth = int(math.log(self.size, 2)) + 1
         i = self.size - 1
-        while i > 0 and self.data[i/2] > self.data[i]:
+        while i > 0 and self.data[i/2] < self.data[i]:
             self.data[i], self.data[i/2] = self.data[i/2], self.data[i]
             i = i / 2
 
     def sort(self):
-        """ This method heapsorts the heap, heapster style. """
-        print "sorting..."
+        """ This method sorts the heap, heapster-heapsort style. """
+        def sift(start, count):
+            root = start
+            while root * 2 + 1 < count:
+                child = root * 2 + 1
+                if child < count - 1 and self.data[child] < self.data[child + 1]:
+                    child += 1
+                if self.data[root] < self.data[child]:
+                    self.data[root], self.data[child] = self.data[child], self.data[root]
+                    root = child
+                else:
+                    return
+     
+        count = self.size
+        start = count / 2 - 1
+        end = count - 1
+
+        # Is this really necessary? If the structure is already a heap...
+        while start >= 0:
+            sift(start, count)
+            start -= 1
+     
+        while end > 0:
+            self.data[end], self.data[0] = self.data[0], self.data[end]
+            sift(0, end)
+            end -= 1
 
     def __len__(self):
         """ Returns the quantity of elements added to the heap. """
@@ -395,6 +419,7 @@ class MovieStoreHeap:
         """ This method returns a list of ordered movies (by increasing rating) that complies the ranges specified. """
         if self._sortHeap:
             self.movies.sort()
+            self._sortHeap = False
 
         if self._updateMovieList:
             # Every time a movie is added, or the filter range is changed, a new temporal
@@ -403,9 +428,9 @@ class MovieStoreHeap:
             # But calling again to fetch a new movie will perform faster.
             self._filteredMovieList = []
             for node in self.movies:
-                rating = node.data.rating * 10
+                rating = node.rating * 10
                 if rating >= self._filterRatingMin and rating <= self._filterRatingMax:
-                    self._filteredMovieList.append(node.data)
+                    self._filteredMovieList.append(node)
             self._updateMovieList = False
 
         return self._filteredMovieList
@@ -620,7 +645,7 @@ class MovieApp(Frame):
         buttonFrame = Frame(innerFrame)
         buttonFrame.grid(row = 2, pady = 8)
         addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 0, column = 0)
-        searchMovieButton = Button(buttonFrame, text = "Search", command = self.nextMovie).grid(row = 0, column = 1, sticky = W)
+        searchMovieButton = Button(buttonFrame, text = "Search", command = self.searchFilteredMovies).grid(row = 0, column = 1, sticky = W)
             # Debugging buttons
         printTreeButton = Button(buttonFrame, text = "Print Tree", command = self.printTree).grid(row = 1, column = 0)
         printHeapButton = Button(buttonFrame, text = "Print Heap", command = self.printHeap).grid(row = 1, column = 1, sticky = W)
@@ -632,10 +657,8 @@ class MovieApp(Frame):
         maxRatingText = Label(inputFrame, text = "To: ").grid(row = 1, column = 0)
         self.minRatingInput = Entry(inputFrame)
         self.minRatingInput.grid(row = 0, column = 1, sticky = W+E+N+S)
-        # self.minRatingInput.bind('<Return>', self.updateMovieList)
         self.maxRatingInput = Entry(inputFrame)
         self.maxRatingInput.grid(row = 1, column = 1, sticky = W+E+N+S)
-        # self.maxRatingInput.bind('<Return>', self.updateMovieList)
 
         master.protocol("WM_DELETE_WINDOW", self.onApplicationClose)
 
@@ -656,41 +679,23 @@ class MovieApp(Frame):
         self.updateStatusBar()
         self.movieDisplay.setMovie(movie)
 
-    def nextMovie(self):
-        """
-        Displays the movie next to the current one. Notice that if the last
-        movie is being displayed, the next movie will be the first one.
-        """
+    def searchFilteredMovies(self):
+        """  """
         min, max = self.getValidRatingInputs()
 
-        """
+        # BENCHMARK - bTREE - SEARCH
         start = time.clock() * 1000000
-        self.storeBalanced.setRatingFilter(min, max)
-        storeBalancedMovie = self.storeBalanced.getNextMovie()
+        self.storeTree.setRatingFilter(min, max)
+        self.storeTree.getFilteredMovies()
         end = time.clock() * 1000000
         self.benchmarkDisplay.binarySearchTree.set(end - start)
 
+        # BENCHMARK - HEAP - SEARCH
         start = time.clock() * 1000000
-        self.store.setRatingFilter(min, max)
+        self.storeHeap.setRatingFilter(min, max)
+        self.storeHeap.getFilteredMovies()
         end = time.clock() * 1000000
-        self.benchmarkDisplay.linked.set(end - start)
-
-        start = time.clock() * 1000000
-        self.storeUnbalanced.setRatingFilter(min, max)
-        storeUnbalancedMovie = self.storeUnbalanced.getNextMovie()
-        end = time.clock() * 1000000
-        self.benchmarkDisplay.degeneratedTree.set(end - start)
-
-        start = time.clock() * 1000000
-        self.storeBalanced.setRatingFilter(min, max)
-        storeBalancedMovie = self.storeBalanced.getNextMovie()
-        end = time.clock() * 1000000
-        self.benchmarkDisplay.binarySearchTree.set(end - start)
-
-        movie = self.store.getNextMovie()
-
-        self.showMovie(movie)
-        """
+        self.benchmarkDisplay.binaryHeap.set(end - start)
 
     def addMovie(self):
         """ Adds a movie. """
@@ -714,45 +719,9 @@ class MovieApp(Frame):
             self.benchmarkDisplay.binaryHeap.set(end - start)
             self.benchmarkDisplay.binaryHeapDepth.set(self.storeHeap.getDepth())
 
-            """
-            start = time.clock() * 1000000
-            self.store.insert(movie)
-            end = time.clock() * 1000000
-            self.benchmarkDisplay.linked.set(end - start)
-
-            # Storing a movie that comes from the MovieStore (i.e. comes from the linked list implementation)
-            start = time.clock() * 1000000
-            self.storeUnbalanced.insert(storeMovie)
-            end = time.clock() * 1000000
-            self.benchmarkDisplay.degeneratedTree.set(end - start)
-            self.benchmarkDisplay.degeneratedTreeDepth.set(self.storeUnbalanced.getDepth())
-            """
-
             self._impDataIndex += 1
         else:
             print "No more movies available."
-
-    def updateMovieList(self, event = None):
-        """
-        Updates the movie list. Called when a new movie is added, or any of the rating input fields
-        have been updated.
-        """
-        min, max = self.getValidRatingInputs()
-
-        # self.store.setRatingFilter(min, max)
-        # self.storeUnbalanced.setRatingFilter(min, max)
-        """
-        start = time.clock() * 1000000
-        end = time.clock() * 1000000
-        self.benchmarkDisplay.linked.set(end - start)
-        """
-
-        movie = self.store.getCurrentMovie()
-        if movie == None:
-            self.updateStatusBar()
-            self.movieDisplay.reset()
-        else:
-            self.showMovie(movie)
 
     def updateStatusBar(self):
         """ Updates the status bar text with some statistics. """
