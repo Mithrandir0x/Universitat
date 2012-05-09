@@ -117,7 +117,6 @@ class BinaryHeap:
     def __init__(self, maxSize = 100):
         """ Class constructor. The default maximum amount of elements that a heap may contain is 100. """
         self.data = [None] * maxSize
-        self.depth = 0
         self.size = 0
         self.maxSize = maxSize
 
@@ -147,7 +146,6 @@ class BinaryHeap:
         """
         self.data[self.size] = element
         self.size += 1
-        self.depth = int(math.log(self.size, 2)) + 1
         i = self.size - 1
         while i > 0 and self.data[i/2] < self.data[i]:
             self.data[i], self.data[i/2] = self.data[i/2], self.data[i]
@@ -156,6 +154,9 @@ class BinaryHeap:
     def sort(self):
         """ This method sorts the heap, heapster-heapsort style. """
         def sift(start, count):
+            """
+
+            """
             root = start
             while root * 2 + 1 < count:
                 child = root * 2 + 1
@@ -181,13 +182,75 @@ class BinaryHeap:
             sift(0, end)
             end -= 1
 
+    @property
+    def depth(self):
+        """
+        This 'method' returns the actual depth of the heap. If the heap is
+        empty, it will return 0, otherwise, it will return a value >= 1.
+
+        (Instead of adding a new property for displaying the depth, this
+        method works as a 'read-only' field, and takes away the need to
+        update the depth each time an element is being added, thus making
+        the whole operation quite faster...)
+        """
+        if self.size == 0:
+            return 0
+        return int(math.log(self.size, 2)) + 1
+
     def __len__(self):
         """ Returns the quantity of elements added to the heap. """
         return self.size
 
-class HashMap: # TODO: Implementar
-     def __init__(self):
-          print "Not implemented yet." #
+class HashTable:
+    """ A simple implementation of a hash table. """
+    def __init__(self, buckets = 200):
+        """ Class constructor. By default, it has 200 buckets. """
+        self.data = [None] * buckets
+        self.slot = [None] * buckets
+        self.size = buckets
+
+    def __getitem__(self, key):
+        """ Array-format getter method to get elements from the table. """
+        return self.get(key)
+
+    def __setitem__(self, key, value):
+        """ Array-format setter method to set elements from the table. """
+        self.add(key, value)
+
+    def set(self, key, value):
+        """ This methods maps the key to the value in the container. """
+        h = self._hash(key)
+        if self.slot[h] != None:
+            # If the hash already exists, simply recalculate the hash until a new one is found.
+            h = self._rehash(key)
+            while self.slot[h] != None:
+                h = self._rehash(key)
+        self.slot[h] = key
+        self.data[h] = value
+
+    def get(self, key):
+        """ This methods returns the value mapped to the key. """
+        sh = self._hash(key)
+        data = None   # The element to be returned
+        h = sh        # The current hash value being accesed
+        stop = False  # A flag to indicate whether the search must be stop
+        found = False # A flag to indicate that the element has been found and the search must end
+        while self.slot[h] != None and not found and not stop:
+            if self.slot[h] == h:
+                found, data = True, self.data[h]
+            else:
+                h = self._rehash(h)
+                if h == sh:
+                    stop = True
+        return data
+
+    def _hash(self, key):
+        """ Returns the index of the bucket to be used given a hashable key. """
+        return hash(key) % self.size
+
+    def _rehash(self, key):
+        """ Returns a new index of a bucket. """
+        return ( hash(key) + 1 ) % self.size
 
 class Movie:
     """
@@ -246,6 +309,10 @@ class Movie:
             return 1
         else:
             return 0
+
+    def __hash__(self):
+        """ Calculates a 'unique' integer hash of the movie object. """
+        return int(self.rating * 10)
     
     def __str__(self):
         """ Returns a reduced set of movie information """
@@ -644,11 +711,11 @@ class MovieApp(Frame):
         # UI/Buttons
         buttonFrame = Frame(innerFrame)
         buttonFrame.grid(row = 2, pady = 8)
-        addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 0, column = 0)
-        searchMovieButton = Button(buttonFrame, text = "Search", command = self.searchFilteredMovies).grid(row = 0, column = 1, sticky = W)
-            # Debugging buttons
-        printTreeButton = Button(buttonFrame, text = "Print Tree", command = self.printTree).grid(row = 1, column = 0)
-        printHeapButton = Button(buttonFrame, text = "Print Heap", command = self.printHeap).grid(row = 1, column = 1, sticky = W)
+        addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 0, column = 0, sticky = W+E+N+S)
+        searchMovieButton = Button(buttonFrame, text = "Search", command = self.searchFilteredMovies).grid(row = 0, column = 1, sticky = W+E+N+S)
+            # UI/Buttons for debugging purposes
+        printTreeButton = Button(buttonFrame, text = "Print Tree", command = self.printTree).grid(row = 1, column = 0, sticky = W+E+N+S)
+        printHeapButton = Button(buttonFrame, text = "Print Heap", command = self.printHeap).grid(row = 1, column = 1, sticky = W+E+N+S)
 
         # UI/Inputs
         inputFrame = Frame(innerFrame)
