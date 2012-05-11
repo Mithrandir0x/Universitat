@@ -46,8 +46,9 @@ class BinarySearchTreePriorityQueue:
 
     def __str__(self):
         s = "--\n"
-        for node in self:
-            s += node.__str__() + "\n"
+        if self.root != None:
+            for node in self:
+                s += node.__str__() + "\n"
         return s + "--"
 
     def __iter__(self):
@@ -106,19 +107,71 @@ class BinarySearchTreePriorityQueue:
                 # print "Going to right branch at depth", currentDepth
                 return self._add(root.right, element, currentDepth + 1)
 
+class MovieGroup:
+    """ Stoopid and puny class used to group movies by the same rating. """
+    def __init__(self, movie):
+        """ Class puny constructor. """
+        self.rating = movie.rating
+        self.movies = [movie]
+
+    def __str__(self):
+        """ Returns a string representation of the list. """
+        if len(self.movies) == 1:
+            return "[ %s" % ( self.movies[0] )
+        else:
+            i, l, s = 0, len(self.movies), ""
+            ch = chr(201)
+            while i < l:
+                s += "%s %s" % ( ch, self.movies[i] )
+                i += 1
+                if i == l - 1:
+                    ch = "\n" + chr(200)
+                else:
+                    ch = "\n" + chr(204)
+            return s
+
+    def __ne__(self, other):
+        """ Not Equal comparator override needed to treat None as special case. """
+        if other != None:
+            return self != other
+        else:
+            return True
+
+    def __eq__(self, other):
+        """ Equal comparator override needed to treat None as special case. """
+        if other != None:
+            return self == other
+        else:
+            return False
+    
+    def __cmp__(self, other):
+        """ Comparator overloading. """
+        if self.rating < other.rating:
+            return -1
+        elif self.rating > other.rating:
+            return 1
+        else:
+            return 0
+
+    def add(self, movie):
+        """ Adds the movie to the puny list of movies. """
+        self.movies.append(movie)
+
 class BinaryHeap:
     """
-    A 'min-heap' implementation of a binary heap.
+    A 'min-heap' implementation of a binary heap, with the modifications specified
+    in the paper.
 
     When adding or removing elements from the heap, this won't be ordered until
-    'self.sort' has been called. Each node of the heap only complies that its left
-    children is lower than the parent node, and the right one is greater.
+    'self.sort' has been called.
     """
     def __init__(self, maxSize = 100):
         """ Class constructor. The default maximum amount of elements that a heap may contain is 100. """
         self.data = [None] * maxSize
         self.size = 0
         self.maxSize = maxSize
+
+        self._ratingsAdded = [] # A 'private' property to store the ratings of movies already added
 
     def __str__(self):
         """ Returns a string representation of the binary heap's content. """
@@ -128,7 +181,7 @@ class BinaryHeap:
         return s + "--"
 
     def __iter__(self):
-        """ Returns a generator to be used to iterate the heap. """
+        """ Returns a generator to be used to iterate through the existent elements in the heap. """
         return self._next()
 
     def _next(self):
@@ -138,48 +191,63 @@ class BinaryHeap:
             yield self.data[i]
             i += 1
 
-    def add(self, element):
+    def add(self, movie):
         """
-        Adds the element passed by to the heap.
-
-        NOTICE that the element must have a comparator implemented.
+        Adds the movie passed by to the heap. When adding elements in the heap,
+        they will be added in a 'min-heap' way. This 
         """
-        self.data[self.size] = element
-        self.size += 1
-        i = self.size - 1
-        while i > 0 and self.data[i/2] < self.data[i]:
-            self.data[i], self.data[i/2] = self.data[i/2], self.data[i]
-            i = i / 2
+        if movie.rating in self._ratingsAdded:
+            # Y U KNOW THIS COSTS O(N)!?!?!
+            for l in self.data:
+                if l.rating == movie.rating:
+                    l.add(movie)
+                    break
+        else:
+            self.data[self.size] = MovieGroup(movie)
+            self.size += 1
+            self._ratingsAdded.append(movie.rating)
+            i = self.size - 1
+            while i > 0 and self.data[i/2] > self.data[i]:
+                self.data[i], self.data[i/2] = self.data[i/2], self.data[i]
+                i = i / 2
 
     def sort(self):
-        """ This method sorts the heap, heapster-heapsort style. """
-        def sift(start, count):
+        """ This method sorts the heap, heapster-heapsort 'max-heap' style. """
+        def siftDown(start, count):
             """
-
+            This method tries to swap down the children's of the branch
+            given by index 'start', making the lowest.
             """
             root = start
             while root * 2 + 1 < count:
-                child = root * 2 + 1
-                if child < count - 1 and self.data[child] < self.data[child + 1]:
+                child = root * 2 + 1 # 'child' is the left children of the current node
+                if child < count - 1 and self.data[child] > self.data[child + 1]:
+                    # Verify that right sibling is lower than the left one, if so,
+                    # let 'child' be the right sibling
                     child += 1
-                if self.data[root] < self.data[child]:
+                if self.data[root] > self.data[child]:
+                    # Swap the current child and the parent if the parent is higher than the child
                     self.data[root], self.data[child] = self.data[child], self.data[root]
                     root = child
                 else:
                     return
-     
-        count = self.size
-        start = count / 2 - 1
-        end = count - 1
 
-        # Is this really necessary? If the structure is already a heap...
+        start = self.size / 2 - 1
+        end = self.size - 1
+
+        # Is this really necessary? If the structure is already ordered by "heap-way"...
         while start >= 0:
-            sift(start, count)
+            # This is necessary to verify that we end-up with a correct min-heap structure,
+            # because we can sort the structure at any time and end up with a max-heap.
+            siftDown(start, self.size)
             start -= 1
      
         while end > 0:
+            # With a 'min-heap' structure, it only takes swapping the first and the
+            # "last" element in the heap to order it, and then reorder the heap
+            # from the beginning to the "end"
             self.data[end], self.data[0] = self.data[0], self.data[end]
-            sift(0, end)
+            siftDown(0, end)
             end -= 1
 
     @property
@@ -716,6 +784,8 @@ class MovieApp(Frame):
             # UI/Buttons for debugging purposes
         printTreeButton = Button(buttonFrame, text = "Print Tree", command = self.printTree).grid(row = 1, column = 0, sticky = W+E+N+S)
         printHeapButton = Button(buttonFrame, text = "Print Heap", command = self.printHeap).grid(row = 1, column = 1, sticky = W+E+N+S)
+        printHeapButton = Button(buttonFrame, text = "Clear", command = self.devClearStores).grid(row = 1, column = 2, sticky = W+E+N+S)
+        printHeapButton = Button(buttonFrame, text = "Add (DEV)", command = self.devClearAdd).grid(row = 1, column = 3, sticky = W+E+N+S)
 
         # UI/Inputs
         inputFrame = Frame(innerFrame)
@@ -740,6 +810,28 @@ class MovieApp(Frame):
     def printHeap(self):
         """ Prints the internal container of MovieStoreHeap. """
         print self.storeHeap.movies
+
+    def devClearStores(self):
+        self._impDataIndex = 0
+        self.storeTree = MovieStoreTree()
+        self.storeHeap = MovieStoreHeap()
+        self.benchmarkDisplay.binarySearchTree.set(0)
+        self.benchmarkDisplay.binaryHeap.set(0)
+        self.benchmarkDisplay.binarySearchTreeDepth.set(0)
+        self.benchmarkDisplay.binaryHeapDepth.set(0)
+
+    def devClearAdd(self):
+        #l = [0, 1, 2, 3, 4, 5, 6, 15, 47]
+        l = [0, 1, 2, 3, 4, 5, 47]
+        self.devClearStores()
+        for i in l:
+            movie = Movie()
+            movie.importFromString(self._data[i])
+            print "Adding movie '%s'..." % ( movie.title )
+            self.storeTree.insert(movie)
+            self.storeHeap.insert(movie)
+        self.benchmarkDisplay.binarySearchTreeDepth.set(self.storeTree.getDepth())
+        self.benchmarkDisplay.binaryHeapDepth.set(self.storeHeap.getDepth())
     
     def showMovie(self, movie):
         """ Displays the current movie. """
