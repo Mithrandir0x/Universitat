@@ -270,12 +270,46 @@ class BinaryHeap:
         return self.size
 
 class HashTable:
-    """ A simple implementation of a hash table. """
+    """
+    A simple implementation of a hash table.
+
+    Hash collision resolution is done by quadratic probing.
+    """
     def __init__(self, buckets = 200):
         """ Class constructor. By default, it has 200 buckets. """
         self.data = [None] * buckets
         self.slot = [None] * buckets
         self.size = buckets
+
+    def __str__(self):
+        """ Returns a string representation of the hash table's content. """
+        s = "--\n"
+        for element in self:
+            s += element.__str__() + "\n"
+        s += "--"
+        """
+        # Uncomment if you want to see the internal structure
+        s = "\n--\n"
+        for i in xrange(self.size):
+            s += "%d [%s, %s]\n" % ( i, self.slot[i], self.data[i] )
+        s += "--"
+        """
+        return s
+
+    def __iter__(self):
+        """ Returns an generator object that allows to iterate over the existent elements of the hash table. """
+        return self._next()
+
+    def _next(self):
+        """
+        'Private' method that performs the search of valid elements inside the hash table. Notice that
+        the order of elements is somewhat random. Keep that in mind!
+        """
+        i = 0
+        while i < self.size:
+            if self.data[i] != None:
+                yield self.data[i]
+            i += 1
 
     def __getitem__(self, key):
         """ Array-format getter method to get elements from the table. """
@@ -283,42 +317,59 @@ class HashTable:
 
     def __setitem__(self, key, value):
         """ Array-format setter method to set elements from the table. """
-        self.add(key, value)
+        self.set(key, value)
 
     def set(self, key, value):
-        """ This methods maps the key to the value in the container. """
-        h = self._hash(key)
-        if self.slot[h] != None:
-            # If the hash already exists, simply recalculate the hash until a new one is found.
-            h = self._rehash(key)
-            while self.slot[h] != None:
-                h = self._rehash(key)
-        self.slot[h] = key
-        self.data[h] = value
+        """
+        This methods maps the key to the value in the container. It is possible to link several
+        elements with the same key, although only the first element added will be the only accessible.
+
+        'key' must be hashable.
+        """
+        hk = hash(key)
+        h = self._hash(hk)
+        i = 0
+        while i < self.size:
+            if self.slot[h] == None:
+                self.slot[h] = key
+                self.data[h] = value
+                break
+            i += 1
+            h = self._rehash(hk, i)
 
     def get(self, key):
-        """ This methods returns the value mapped to the key. """
-        sh = self._hash(key)
-        data = None   # The element to be returned
-        h = sh        # The current hash value being accesed
-        stop = False  # A flag to indicate whether the search must be stop
-        found = False # A flag to indicate that the element has been found and the search must end
-        while self.slot[h] != None and not found and not stop:
-            if self.slot[h] == h:
-                found, data = True, self.data[h]
+        """
+        This methods returns the value mapped to the key. Notice that fetching from a key tied to
+        more than one element will return the first element that was added with the forementioned
+        key.
+
+        The only way to retrieve the other elements with the same key would be iterating over all the
+        structure.
+
+        'key' must be hashable.
+        """
+        hk = hash(key)
+        h = self._hash(hk)
+        i = 0
+        while i < self.size:
+            if self.slot[h] == key:
+                return self.data[h]
             else:
-                h = self._rehash(h)
-                if h == sh:
-                    stop = True
-        return data
+                h = self._rehash(hk, i)
+            i += 1
+        return None
 
-    def _hash(self, key):
-        """ Returns the index of the bucket to be used given a hashable key. """
-        return hash(key) % self.size
+    def _hash(self, hashKey):
+        """ Given a hash value calculated from a key, calculate its position inside the table. """
+        return hashKey % self.size
 
-    def _rehash(self, key):
-        """ Returns a new index of a bucket. """
-        return ( hash(key) + 1 ) % self.size
+    def _rehash(self, hashKey, integer):
+        """
+        When adding an element and a collision happens, a rehashing of the hash must be
+        done to solve the collision. Given the hash of the key and an arbitrary integer
+        value, a new hash is calculated.
+        """
+        return ( hashKey + integer * integer ) % self.size
 
 class Movie:
     """
@@ -483,13 +534,6 @@ class MovieStoreTree:
         self._currentMovie = self.movies.add(movie)
         self._updateMovieList = True
 
-    def getCurrentMovie(self):
-        """ It returns the movie currently selected or None if not available. """
-        if self._currentMovie != None:
-            return self._currentMovie.data
-        else:
-            return None
-
     def setRatingFilter(self, min = 0, max = 100):
         """ This method updates the minimal and maximum rating that filters the movies being showed. """
         self._updateMovieList = self._updateMovieList or self._filterRatingMin != min or self._filterRatingMax != max
@@ -538,13 +582,6 @@ class MovieStoreHeap:
         self._updateMovieList = True
         self._sortHeap = True
 
-    def getCurrentMovie(self):
-        """ It returns the movie currently selected or None if not available. """
-        if self._currentMovie != None:
-            return self._currentMovie.data
-        else:
-            return None
-
     def setRatingFilter(self, min = 0, max = 100):
         """ This method updates the minimal and maximum rating that filters the movies being showed. """
         self._updateMovieList = self._updateMovieList or self._filterRatingMin != min or self._filterRatingMax != max
@@ -553,6 +590,9 @@ class MovieStoreHeap:
     def getFilteredMovies(self):
         """ This method returns a list of ordered movies (by increasing rating) that complies the ranges specified. """
         if self._sortHeap:
+            # When sorting the heap, it will make the whole method perform slower than even the binary
+            # tree search, but next calls to this method won't need the sorting, thus performing
+            # faster.
             self.movies.sort()
             self._sortHeap = False
 
@@ -565,7 +605,8 @@ class MovieStoreHeap:
             for node in self.movies:
                 rating = node.rating * 10
                 if rating >= self._filterRatingMin and rating <= self._filterRatingMax:
-                    self._filteredMovieList.append(node)
+                    for movie in node.movies:
+                        self._filteredMovieList.append(movie)
             self._updateMovieList = False
 
         return self._filteredMovieList
@@ -573,6 +614,45 @@ class MovieStoreHeap:
     def getDepth(self):
         """ This method returns the current depth of the internal tree structure. """
         return self.movies.depth
+
+class MovieStoreHash:
+    def __init__(self):
+        """ Class constructor. """
+        self.movies = HashTable()
+
+        self._filterRatingMin = 0   # The minimal value that a movie's rating could have.
+        self._filterRatingMax = 100 # The maximum value that a movie's rating could have.
+
+        # This properties are required to store temporally the movies that abide for the rating filter values
+        self._filteredMovieList = None
+        self._updateMovieList = False   # A flag that indicates when the list of movies between the range specified must be updated.
+
+    def insert(self, movie):
+        """ Adds a new movie in the list. """
+        self.movies[movie.rating] = movie
+        self._updateMovieList = True
+
+    def setRatingFilter(self, min = 0, max = 100):
+        """ This method updates the minimal and maximum rating that filters the movies being showed. """
+        self._updateMovieList = self._updateMovieList or self._filterRatingMin != min or self._filterRatingMax != max
+        self._filterRatingMin, self._filterRatingMax = min, max
+
+    def getFilteredMovies(self):
+        """ This method returns a list of ordered movies (by increasing rating) that complies the ranges specified. """
+        if self._updateMovieList:
+            # Every time a movie is added, or the filter range is changed, a new temporal
+            # list of movies must be created, thus decreasing performance when getting the
+            # next movie.
+            # But calling again to fetch a new movie will perform faster.
+            self._filteredMovieList = []
+            for movie in self.movies:
+                rating = movie.rating * 10
+                if rating >= self._filterRatingMin and rating <= self._filterRatingMax:
+                    self._filteredMovieList.append(movie)
+            self._updateMovieList = False
+
+        # The list won't be ordered...
+        return self._filteredMovieList
 
 class MovieDisplay(Frame):
     """ This widget displays Movie information. """
@@ -705,8 +785,8 @@ class BenchmarkDisplay(Frame):
         self.binaryHeap = OutputLabel(self, "HEAP COST:", 0)
         self.binaryHeap.grid(row = 1, sticky = W+E)
 
-        self.hashMap = OutputLabel(self, "HASH COST:", 0)
-        self.hashMap.grid(row = 2, sticky = W+E)
+        self.hashTable = OutputLabel(self, "HASH COST:", 0)
+        self.hashTable.grid(row = 2, sticky = W+E)
 
         self.binarySearchTreeDepth = OutputLabel(self, "ABB ORIGINAL DEPTH:", 0)
         self.binarySearchTreeDepth.grid(row = 3, sticky = W+E)
@@ -749,7 +829,7 @@ class MovieApp(Frame):
 
         self.storeTree = MovieStoreTree()
         self.storeHeap = MovieStoreHeap()
-        # self.storeHash = MovieStore()
+        self.storeHash = MovieStoreHash()
 
         # self.storeBalanced = MovieStoreTree()    # A store based on a BST where movies from 'self._data' will be saved.
         # self.storeUnbalanced = MovieStoreTree()  # A store based on a BST where movies from 'self.store' will be saved.
@@ -784,8 +864,10 @@ class MovieApp(Frame):
             # UI/Buttons for debugging purposes
         printTreeButton = Button(buttonFrame, text = "Print Tree", command = self.printTree).grid(row = 1, column = 0, sticky = W+E+N+S)
         printHeapButton = Button(buttonFrame, text = "Print Heap", command = self.printHeap).grid(row = 1, column = 1, sticky = W+E+N+S)
-        printHeapButton = Button(buttonFrame, text = "Clear", command = self.devClearStores).grid(row = 1, column = 2, sticky = W+E+N+S)
-        printHeapButton = Button(buttonFrame, text = "Add (DEV)", command = self.devClearAdd).grid(row = 1, column = 3, sticky = W+E+N+S)
+        printHashButton = Button(buttonFrame, text = "Print Hash", command = self.printHash).grid(row = 1, column = 2, sticky = W+E+N+S)
+        addButton = Button(buttonFrame, text = "Add (DEV)", command = self.devClearAdd).grid(row = 2, column = 0, sticky = W+E+N+S)
+        dumpButton = Button(buttonFrame, text = "Dump (DEV)", command = self.devDumpMovies).grid(row = 2, column = 1, sticky = W+E+N+S)
+        clearButton = Button(buttonFrame, text = "Clear", command = self.devClearStores).grid(row = 2, column = 2, sticky = W+E+N+S)
 
         # UI/Inputs
         inputFrame = Frame(innerFrame)
@@ -811,25 +893,70 @@ class MovieApp(Frame):
         """ Prints the internal container of MovieStoreHeap. """
         print self.storeHeap.movies
 
+    def printHash(self):
+        """ Prints the internal container of MovieStoreHash. """
+        print self.storeHash.movies
+
     def devClearStores(self):
         self._impDataIndex = 0
         self.storeTree = MovieStoreTree()
         self.storeHeap = MovieStoreHeap()
+        self.storeHash = MovieStoreHash()
         self.benchmarkDisplay.binarySearchTree.set(0)
         self.benchmarkDisplay.binaryHeap.set(0)
+        self.benchmarkDisplay.hashTable.set(0)
         self.benchmarkDisplay.binarySearchTreeDepth.set(0)
         self.benchmarkDisplay.binaryHeapDepth.set(0)
+
+    def devDumpMovies(self):
+        self.devClearStores()
+        tTree, tHeap, tHash = 0, 0, 0
+        for m in self._data:
+            movie = Movie()
+            movie.importFromString(m)
+            print "Adding movie '%s'..." % ( movie.title )
+            start = time.clock() * 1000000
+            self.storeTree.insert(movie)
+            end = time.clock() * 1000000
+            tTree += end - start
+            start = time.clock() * 1000000
+            self.storeHeap.insert(movie)
+            end = time.clock() * 1000000
+            tHeap += end - start
+            start = time.clock() * 1000000
+            self.storeHash.insert(movie)
+            end = time.clock() * 1000000
+            tHash += end - start
+        self.benchmarkDisplay.binarySearchTree.set(tTree)
+        self.benchmarkDisplay.binaryHeap.set(tHeap)
+        self.benchmarkDisplay.hashTable.set(tHash)
+        self.benchmarkDisplay.binarySearchTreeDepth.set(self.storeTree.getDepth())
+        self.benchmarkDisplay.binaryHeapDepth.set(self.storeHeap.getDepth())
 
     def devClearAdd(self):
         #l = [0, 1, 2, 3, 4, 5, 6, 15, 47]
         l = [0, 1, 2, 3, 4, 5, 47]
+        tTree, tHeap, tHash = 0, 0, 0
         self.devClearStores()
         for i in l:
             movie = Movie()
             movie.importFromString(self._data[i])
             print "Adding movie '%s'..." % ( movie.title )
+            start = time.clock() * 1000000
             self.storeTree.insert(movie)
+            end = time.clock() * 1000000
+            tTree += end - start
+            start = time.clock() * 1000000
             self.storeHeap.insert(movie)
+            end = time.clock() * 1000000
+            tHeap += end - start
+            start = time.clock() * 1000000
+            self.storeHash.insert(movie)
+            end = time.clock() * 1000000
+            tHash += end - start
+        self.benchmarkDisplay.binarySearchTree.set(tTree)
+        self.benchmarkDisplay.binaryHeap.set(tHeap)
+        self.benchmarkDisplay.hashTable.set(tHash)
         self.benchmarkDisplay.binarySearchTreeDepth.set(self.storeTree.getDepth())
         self.benchmarkDisplay.binaryHeapDepth.set(self.storeHeap.getDepth())
     
@@ -845,16 +972,23 @@ class MovieApp(Frame):
         # BENCHMARK - bTREE - SEARCH
         start = time.clock() * 1000000
         self.storeTree.setRatingFilter(min, max)
-        self.storeTree.getFilteredMovies()
+        lm = self.storeTree.getFilteredMovies()
         end = time.clock() * 1000000
         self.benchmarkDisplay.binarySearchTree.set(end - start)
 
         # BENCHMARK - HEAP - SEARCH
         start = time.clock() * 1000000
         self.storeHeap.setRatingFilter(min, max)
-        self.storeHeap.getFilteredMovies()
+        lm = self.storeHeap.getFilteredMovies()
         end = time.clock() * 1000000
         self.benchmarkDisplay.binaryHeap.set(end - start)
+
+        # BENCHMARK - HASH - SEARCH
+        start = time.clock() * 1000000
+        self.storeHash.setRatingFilter(min, max)
+        lm = self.storeHash.getFilteredMovies()
+        end = time.clock() * 1000000
+        self.benchmarkDisplay.hashTable.set(end - start)
 
     def addMovie(self):
         """ Adds a movie. """
@@ -877,6 +1011,12 @@ class MovieApp(Frame):
             end = time.clock() * 1000000
             self.benchmarkDisplay.binaryHeap.set(end - start)
             self.benchmarkDisplay.binaryHeapDepth.set(self.storeHeap.getDepth())
+
+            # BENCHMARK - HASH - ADD
+            start = time.clock() * 1000000
+            self.storeHash.insert(movie)
+            end = time.clock() * 1000000
+            self.benchmarkDisplay.hashTable.set(end - start)
 
             self._impDataIndex += 1
         else:
