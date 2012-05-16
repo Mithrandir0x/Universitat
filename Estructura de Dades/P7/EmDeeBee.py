@@ -85,9 +85,9 @@ class BinarySearchTreePriorityQueue:
         element in the tree structure.
         """
         # When adding an element from the actual node, all elements less important
-        # than the actual node are ALWAYS in the left branch, but the most importants
-        # are on the right branch
-        if root.data > element:
+        # than the actual node are ALWAYS in the right branch, but the most importants
+        # are on the left branch
+        if root.data < element:
             if root.left == None:
                 root.left = Node(element)
                 if currentDepth > self.depth:
@@ -650,8 +650,8 @@ class MovieStoreHash:
                 if rating >= self._filterRatingMin and rating <= self._filterRatingMax:
                     self._filteredMovieList.append(movie)
             self._updateMovieList = False
-
-        # The list won't be ordered...
+        # Unlike the other structures that can return an ordered list of movies, the hash table is
+        # not implicitly ordered, so the list returned is ordered randomly.
         return self._filteredMovieList
 
 class MovieDisplay(Frame):
@@ -861,6 +861,7 @@ class MovieApp(Frame):
         buttonFrame.grid(row = 2, pady = 8)
         addMovieButton = Button(buttonFrame, text = "Add Movie", command = self.addMovie).grid(row = 0, column = 0, sticky = W+E+N+S)
         searchMovieButton = Button(buttonFrame, text = "Search", command = self.searchFilteredMovies).grid(row = 0, column = 1, sticky = W+E+N+S)
+        """
             # UI/Buttons for debugging purposes
         printTreeButton = Button(buttonFrame, text = "Print Tree", command = self.printTree).grid(row = 1, column = 0, sticky = W+E+N+S)
         printHeapButton = Button(buttonFrame, text = "Print Heap", command = self.printHeap).grid(row = 1, column = 1, sticky = W+E+N+S)
@@ -868,6 +869,7 @@ class MovieApp(Frame):
         addButton = Button(buttonFrame, text = "Add (DEV)", command = self.devClearAdd).grid(row = 2, column = 0, sticky = W+E+N+S)
         dumpButton = Button(buttonFrame, text = "Dump (DEV)", command = self.devDumpMovies).grid(row = 2, column = 1, sticky = W+E+N+S)
         clearButton = Button(buttonFrame, text = "Clear", command = self.devClearStores).grid(row = 2, column = 2, sticky = W+E+N+S)
+        """
 
         # UI/Inputs
         inputFrame = Frame(innerFrame)
@@ -898,6 +900,7 @@ class MovieApp(Frame):
         print self.storeHash.movies
 
     def devClearStores(self):
+        """ This method resets the stores and UI. """
         self._impDataIndex = 0
         self.storeTree = MovieStoreTree()
         self.storeHeap = MovieStoreHeap()
@@ -908,7 +911,15 @@ class MovieApp(Frame):
         self.benchmarkDisplay.binarySearchTreeDepth.set(0)
         self.benchmarkDisplay.binaryHeapDepth.set(0)
 
+    def devPrintFilteredMovieList(self, movieList):
+        """ Utility method to print the list of movies filtered by rating. """
+        print "--"
+        for movie in movieList:
+            print movie
+        print "--"
+
     def devDumpMovies(self):
+        """ This method loads all the movies from 'peliculas100.dat' and updates the statistics. """
         self.devClearStores()
         tTree, tHeap, tHash = 0, 0, 0
         for m in self._data:
@@ -934,6 +945,7 @@ class MovieApp(Frame):
         self.benchmarkDisplay.binaryHeapDepth.set(self.storeHeap.getDepth())
 
     def devClearAdd(self):
+        """ This method clears all the stores and add a specific amount of movies. """
         #l = [0, 1, 2, 3, 4, 5, 6, 15, 47]
         l = [0, 1, 2, 3, 4, 5, 47]
         tTree, tHeap, tHash = 0, 0, 0
@@ -966,7 +978,7 @@ class MovieApp(Frame):
         self.movieDisplay.setMovie(movie)
 
     def searchFilteredMovies(self):
-        """  """
+        """ This method makes every store to search for movies within the range of rating values specified. """
         min, max = self.getValidRatingInputs()
 
         # BENCHMARK - bTREE - SEARCH
@@ -974,6 +986,7 @@ class MovieApp(Frame):
         self.storeTree.setRatingFilter(min, max)
         lm = self.storeTree.getFilteredMovies()
         end = time.clock() * 1000000
+        # self.devPrintFilteredMovieList(lm)
         self.benchmarkDisplay.binarySearchTree.set(end - start)
 
         # BENCHMARK - HEAP - SEARCH
@@ -981,6 +994,7 @@ class MovieApp(Frame):
         self.storeHeap.setRatingFilter(min, max)
         lm = self.storeHeap.getFilteredMovies()
         end = time.clock() * 1000000
+        # self.devPrintFilteredMovieList(lm)
         self.benchmarkDisplay.binaryHeap.set(end - start)
 
         # BENCHMARK - HASH - SEARCH
@@ -988,6 +1002,7 @@ class MovieApp(Frame):
         self.storeHash.setRatingFilter(min, max)
         lm = self.storeHash.getFilteredMovies()
         end = time.clock() * 1000000
+        # self.devPrintFilteredMovieList(lm)
         self.benchmarkDisplay.hashTable.set(end - start)
 
     def addMovie(self):
