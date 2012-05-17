@@ -29,6 +29,68 @@ class Node:
         """ When printing a node, it prints the content of the data. """
         return self.data.__str__()
 
+class LinkedList:
+    """
+    This class implements a SINGLE-LINKED list that allows to add elements
+    at the beginning or the end of the list.
+
+    And yes, it is pretty obvious that instead of creating a new linked list structure,
+    the current list implementation python offers is enough, but alas, I'm bored.
+    """
+    def __init__(self):
+        self.head = None
+        # In order to have an efficient append method, it is
+        # necessary to have a reference of the end of the list.
+        # Otherwise, appending would cost O(N), instead of O(1)...
+        self.tail = None
+        self.size = 0
+
+    def __str__(self):
+        """ Returns a string representation of the internal structure. """
+        s = "--\n"
+        for element in self:
+            s += element.__str__() + "\n"
+        s += "--"
+        return s
+
+    def __len__(self):
+        """ Returns the current size of the list. """
+        return self.size
+
+    def __iter__(self):
+        """ Returns a generator method to iterate over the elements of the list. """
+        return self._next()
+
+    def _next(self):
+        """ 'Private' method to create the generator. """
+        node = self.head
+        while node != None:
+            yield node.data
+            node = node.right
+
+    def prepend(self, element):
+        """ Adds a new element at the beginning of the list. """
+        temp = Node(element, None, self.head)
+        self.size += 1
+        if self.size <= 1:
+            self.tail = self.head
+        self.head = temp
+
+    def append(self, element):
+        """ Adds a new element at the end of the list. """
+        temp = Node(element)
+        self.size += 1
+        if self.isEmpty():
+            self.head = temp
+            self.tail = temp
+        else:
+            self.tail.right = temp
+            self.tail = temp
+
+    def isEmpty(self):
+        """ Returns whether the list is empty or not. """
+        return self.head == None and self.tail == None
+
 class BinarySearchTreePriorityQueue:
     """
     Implementation of a PriorityQueue based on a binary search tree.
@@ -112,17 +174,18 @@ class MovieGroup:
     def __init__(self, movie):
         """ Class puny constructor. """
         self.rating = movie.rating
-        self.movies = [movie]
+        self.movies = LinkedList()
+        self.movies.append(movie)
 
     def __str__(self):
         """ Returns a string representation of the list. """
         if len(self.movies) == 1:
-            return "[ %s" % ( self.movies[0] )
+            return "[ %s" % ( self.movies.head )
         else:
             i, l, s = 0, len(self.movies), ""
             ch = chr(201)
-            while i < l:
-                s += "%s %s" % ( ch, self.movies[i] )
+            for movie in self.movies:
+                s += "%s %s" % ( ch, movie )
                 i += 1
                 if i == l - 1:
                     ch = "\n" + chr(200)
@@ -1061,7 +1124,7 @@ class MovieApp(Frame):
 
     def onApplicationClose(self):
         """
-        Method called whe widget is about to be closed. In this method, the
+        Method called the widget is about to be closed. In this method, the
         movie display's image cache is cleared, and the widget is closed.
         """
         self.movieDisplay.clearImageCache()
