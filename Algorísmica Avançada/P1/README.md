@@ -16,7 +16,9 @@ genera els fitxers necessaris per visualitzar a gnuplot.
 
 Per veure les gràfiques a gnuplot, s'ha d'executar la següent comanda:
 
-`plot 'f1103.res' u 1:(log10($2)) w l, 'f11+03.res' u 1:(log10($2)) w l, 'f11-03.res' u 1:(log10($2)) w l, 'f1103+.res' u 1:(log10($2)) w l, 'f1103-.res' u 1:(log10($2)) w l`
+```
+plot 'f1103.res' u 1:(log10($2)) w l, 'f11+03.res' u 1:(log10($2)) w l, 'f11-03.res' u 1:(log10($2)) w l, 'f1103+.res' u 1:(log10($2)) w l, 'f1103-.res' u 1:(log10($2)) w l
+```
 
 Per últim, una petita comparativa entre els diferents errors de càlcul propagat
 pel tipus de dada emprada:
