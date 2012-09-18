@@ -1,3 +1,4 @@
-Universitat.sublime-project
-Universitat.sublime-workspace
+*.sublime-project
+*.sublime-workspace
 .DS_Store
+TODO
