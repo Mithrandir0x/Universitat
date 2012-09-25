@@ -47,7 +47,7 @@ float producteEscalar(int n, float *x, float *y)
     int i;
     float r = 0.f;
 
-    printf("llargada vector: %d\n", n);
+    /* printf("llargada vector: %d\n", n); */
 
     for ( i = 0 ; i < n ; i++ )
     {

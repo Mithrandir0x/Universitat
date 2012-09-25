@@ -1,9 +1,15 @@
 clean:
 	del *.o *.exe *.res
 
-all: clean p1.exe p2.exe p3.exe p4.exe
+all: clean p1.exe p2.exe p3.exe p4.exe p5.exe
 
 tots: clean ex1_ap_a ex1_ap_bcd ex1_ap_bcd_float ex2_ap_a ex2_ap_b
+
+ex3: p5.exe
+	type inputs\ex3_01.in | p5
+	type inputs\ex3_02.in | p5
+	type inputs\ex3_03.in | p5
+	type inputs\ex3_04.in | p5
 
 ex2_ap_b: p4.exe
 	type inputs\ex2_ap_b.in | p4
@@ -24,6 +30,10 @@ ex1_ap_a: p1.exe
 	type inputs\ex1_ap_a_100.in | p1 > coefs_ex1_100.res
 	type inputs\ex1_ap_a_1000.in | p1 > coefs_ex1_1000.res
 	type inputs\ex1_ap_a_10000.in | p1 > coefs_ex1_10000.res
+
+p5.exe:
+	gcc -c p5.c -ansi -pedantic -O -Wall
+	gcc p5.o ../COMMON/lib/utils.o -o p5.exe -lm
 
 p4.exe:
 	gcc -c p4.c -ansi -pedantic -O -Wall
