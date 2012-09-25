@@ -12,7 +12,7 @@ d'utilitzar nombres en coma flotant simple, utilitza coma flotant doble. També
 genera els fitxers necessaris per visualitzar a gnuplot.
 
 `make epsilon` Compila l'executable per calcular l'epsilon de la màquina per
-`float`s i `double`s.
+`float` i `double`.
 
 Per veure les gràfiques a gnuplot, s'ha d'executar la següent comanda:
 
