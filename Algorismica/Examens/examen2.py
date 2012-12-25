@@ -41,7 +41,8 @@ def intersection(v1, v2):
             i += 1
     return result
 
-#print anagrams('amor', 'mora')
+print anagrams('amor', 'mora')
+print anagrams('hello world', 'wlrdo lhleo')
 #print anagrams('amor', 'roma')
 #print anagrams('mora', 'amor')
 #print anagrams('roma', 'trai')
