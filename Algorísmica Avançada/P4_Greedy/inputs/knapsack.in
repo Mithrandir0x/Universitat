@@ -1,0 +1,13 @@
+#
+# Example with default knapsack max. weight
+#
+# Expected result:
+#       
+#
+
+2, 1
+4, 30
+10, 40
+2, 5
+3, 55
+1, 4

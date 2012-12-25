@@ -1,0 +1,12 @@
+#
+# This is an example of a knapsack that will make "knapsack_resolution"
+# function to return a wrong pack of items.
+#
+# It should be called with knWeight = 12
+#
+
+10, 11
+3, 2.99
+3, 2.99
+3, 2.99
+3, 2.99

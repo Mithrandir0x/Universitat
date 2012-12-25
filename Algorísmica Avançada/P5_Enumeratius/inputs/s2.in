@@ -1,0 +1,14 @@
+..24..3..
+.8....42.
+.5.9.....
+1.478....
+....9....
+....342.7
+.....5.3.
+.67....1.
+..9..18..
+
+56 empty spaces
+
+naive_sudoku_resolution: 19110 recursions
+minrc_sudoku_resolution: 101370 recursions

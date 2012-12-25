@@ -1,0 +1,878 @@
+{
+  "name": "Ø",
+  "goodpath": true,
+  "children": [
+    {
+      "name": "3 (S_11)",
+      "children": []
+    },
+    {
+      "name": "7 (S_11)",
+      "children": []
+    },
+    {
+      "name": "9 (S_11)",
+      "goodpath": true,
+      "children": [
+        {
+          "name": "5 (S_13)",
+          "children": []
+        },
+        {
+          "name": "7 (S_13)",
+          "children": [
+            {
+              "name": "3 (S_15)",
+              "children": [
+                {
+                  "name": "5 (S_19)",
+                  "children": [
+                    {
+                      "name": "2 (S_21)",
+                      "goodpath": true,
+                      "children": [
+                        {
+                          "name": "1 (S_31)",
+                          "children": []
+                        },
+                        {
+                          "name": "3 (S_31)",
+                          "children": [
+                            {
+                              "name": "1 (S_71)",
+                              "children": [
+                                {
+                                  "name": "7 (S_91)",
+                                  "goodpath": true,
+                                  "children": [
+                                    {
+                                      "name": "5 (S_23)",
+                                      "children": []
+                                    },
+                                    {
+                                      "name": "6 (S_23)",
+                                      "goodpath": true,
+                                      "children": [
+                                        {
+                                          "name": "5 (S_24)",
+                                          "children": [
+                                            {
+                                              "name": "8 (S_26)",
+                                              "goodpath": true,
+                                              "children": [
+                                                {
+                                                  "name": "1 (S_42)",
+                                                  "goodpath": true,
+                                                  "children": [
+                                                    {
+                                                      "name": "3 (S_52)",
+                                                      "children": [
+                                                        {
+                                                          "name": "7 (S_62)",
+                                                          "children": [
+                                                            {
+                                                              "name": "1 (S_33)",
+                                                              "children": [
+                                                                {
+                                                                  "name": "6 (S_36)",
+                                                                  "children": [
+                                                                    {
+                                                                      "name": "4 (S_37)",
+                                                                      "goodpath": true,
+                                                                      "children": [
+                                                                        {
+                                                                          "name": "5 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "9 (S_53)",
+                                                                              "children": [
+                                                                                {
+                                                                                  "name": "8 (S_44)",
+                                                                                  "goodpath": true,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "name": "3 (S_47)",
+                                                                                      "goodpath": true,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "7 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "9 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "1 (S_54)",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "name": "6 (S_74)",
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "name": "7 (S_55)",
+                                                                                                          "goodpath": true,
+                                                                                                          "children": [
+                                                                                                            {
+                                                                                                              "name": "6 (S_65)",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "name": "8 (S_75)",
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "name": "4 (S_85)",
+                                                                                                                      "goodpath": true,
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "name": "1 (S_67)",
+                                                                                                                          "children": [
+                                                                                                                          ]
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                          "name": "8 (S_67)",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "name": "1 (S_69)",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "name": "1 (S_96)",
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "name": "9 (S_78)",
+                                                                                                                                      "children": [
+                                                                                                                                        {
+                                                                                                                                          "name": "3 (S_79)",
+                                                                                                                                          "children": [
+                                                                                                                                            {
+                                                                                                                                              "name": "7 (S_87)",
+                                                                                                                                              "children": [
+                                                                                                                                                {
+                                                                                                                                                  "name": "6 (S_97)",
+                                                                                                                                                  "children": [
+                                                                                                                                                    {
+                                                                                                                                                      "name": "2 (S_89)",
+                                                                                                                                                      "goodpath": true,
+                                                                                                                                                      "children": [
+                                                                                                                                                      ]
+                                                                                                                                                    }
+                                                                                                                                                  ]
+                                                                                                                                                }
+                                                                                                                                              ]
+                                                                                                                                            }
+                                                                                                                                          ]
+                                                                                                                                        }
+                                                                                                                                      ]
+                                                                                                                                    }
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            },
+                                                                                                            {
+                                                                                                              "name": "8 (S_65)",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "name": "6 (S_75)",
+                                                                                                                  "deadend": true,
+                                                                                                                  "children": [
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            }
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "7 (S_49)",
+                                                                                              "deadend": true,
+                                                                                              "children": [
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    },
+                                                                                    {
+                                                                                      "name": "7 (S_47)",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "3 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "1 (S_54)",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "name": "6 (S_74)",
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "name": "7 (S_55)",
+                                                                                                          "deadend": true,
+                                                                                                          "children": [
+                                                                                                            {
+                                                                                                              "name": "6 (S_65)",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "name": "8 (S_75)",
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "name": "4 (S_85)",
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "name": "8 (S_67)",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "name": "1 (S_69)",
+                                                                                                                              "children": [
+                                                                                                                                {
+                                                                                                                                  "name": "1 (S_96)",
+                                                                                                                                  "children": [
+                                                                                                                                    {
+                                                                                                                                      "name": "[-] (S_78)",
+                                                                                                                                      "deadend": true,
+                                                                                                                                      "children": [
+                                                                                                                                      ]
+                                                                                                                                    }
+                                                                                                                                  ]
+                                                                                                                                }
+                                                                                                                              ]
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            },
+                                                                                                            {
+                                                                                                              "name": "8 (S_65)",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "name": "[-] (S_75)",
+                                                                                                                  "deadend": true,
+                                                                                                                  "children": [
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            }
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "name": "9 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "5 (S_53)",
+                                                                              "deadend": true,
+                                                                              "children": [
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "name": "7 (S_52)",
+                                                      "children": [
+                                                        {
+                                                          "name": "3 (S_62)",
+                                                          "deadend": true,
+                                                          "children": [
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "name": "3 (S_42)",
+                                                  "deadend": true,
+                                                  "children": [
+                                                    {
+                                                      "name": "1 (S_52)",
+                                                      "children": [
+                                                        {
+                                                          "name": "7 (S_62)",
+                                                          "children": [
+                                                            {
+                                                              "name": "1 (S_33)",
+                                                              "children": [
+                                                                {
+                                                                  "name": "6 (S_36)",
+                                                                  "children": [
+                                                                    {
+                                                                      "name": "4 (S_37)",
+                                                                      "deadend": true,
+                                                                      "children": [
+                                                                        {
+                                                                          "name": "5 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "9 (S_53)",
+                                                                              "deadend": true,
+                                                                              "children": [
+                                                                                {
+                                                                                  "name": "1 (S_44)",
+                                                                                  "deadend": true,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "name": "7 (S_47)",
+                                                                                      "deadend": true,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "8 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "9 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "[-] (S_54)",
+                                                                                                  "deadend": true,
+                                                                                                  "children": [
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "8 (S_49)",
+                                                                                              "deadend": true,
+                                                                                              "children": [
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    },
+                                                                                    {
+                                                                                      "name": "8 (S_47)",
+                                                                                      "deadend": true,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "7 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "9 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "[-] (S_54)",
+                                                                                                  "deadend": true,
+                                                                                                  "children": [
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "7 (S_48)",
+                                                                                              "deadend": true,
+                                                                                              "children": [
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                },
+                                                                                {
+                                                                                  "name": "8 (S_44)",
+                                                                                  "deadend": true,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "name": "1 (S_47)",
+                                                                                      "deadend": true,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "7 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "9 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "[-] (S_54)",
+                                                                                                  "deadend": true,
+                                                                                                  "children": [
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "7 (S_49)",
+                                                                                              "deadend": true,
+                                                                                              "children": [
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    },
+                                                                                    {
+                                                                                      "name": "7 (S_47)",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "1 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "[-] (S_54)",
+                                                                                                  "deadend": true,
+                                                                                                  "children": [
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "name": "9 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "5 (S_53)",
+                                                                              "deadend": true,
+                                                                              "children": [
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "name": "7 (S_52)",
+                                                      "children": [
+                                                        {
+                                                          "name": "1 (S_62)",
+                                                          "children": [
+                                                            {
+                                                              "name": "1 (S_33)",
+                                                              "children": [
+                                                                {
+                                                                  "name": "6 (S_36)",
+                                                                  "children": [
+                                                                    {
+                                                                      "name": "4 (S_37)",
+                                                                      "deadend": true,
+                                                                      "children": [
+                                                                        {
+                                                                          "name": "5 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "9 (S_53)",
+                                                                              "deadend": true,
+                                                                              "children": [
+                                                                                {
+                                                                                  "name": "1 (S_44)",
+                                                                                  "deadend": true,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "name": "7 (S_47)",
+                                                                                      "deadend": true,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "8 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "9 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "[-] (S_55)",
+                                                                                                  "deadend": true,
+                                                                                                  "children": [
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "8 (S_49)",
+                                                                                              "deadend": true,
+                                                                                              "children": [
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    },
+                                                                                    {
+                                                                                      "name": "8 (S_47)",
+                                                                                      "deadend": true,
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "7 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "9 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "[-] (S_55)",
+                                                                                                  "deadend": true,
+                                                                                                  "children": [
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        },
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "7 (S_49)",
+                                                                                              "deadend": true,
+                                                                                              "children": [
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                },
+                                                                                {
+                                                                                  "name": "8 (S_44)",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "name": "7 (S_47)",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "1 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "1 (S_54)",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "name": "7 (S_74)",
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "name": "3 (S_55)",
+                                                                                                          "deadend": true,
+                                                                                                          "children": [
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "name": "9 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "5 (S_53)",
+                                                                              "deadend": true,
+                                                                              "children": [
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "name": "7 (S_42)",
+                                                  "deadend": true,
+                                                  "children": [
+                                                    {
+                                                      "name": "1 (S_52)",
+                                                      "deadend": true,
+                                                      "children": []
+                                                    },
+                                                    {
+                                                      "name": "3 (S_52)",
+                                                      "children": [
+                                                        {
+                                                          "name": "1 (S_62)",
+                                                          "children": [
+                                                            {
+                                                              "name": "1 (S_33)",
+                                                              "children": [
+                                                                {
+                                                                  "name": "6 (S_36)",
+                                                                  "children": [
+                                                                    {
+                                                                      "name": "4 (S_37)",
+                                                                      "deadend": true,
+                                                                      "children": [
+                                                                        {
+                                                                          "name": "5 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "9 (S_53)",
+                                                                              "deadend": true,
+                                                                              "children": [
+                                                                                {
+                                                                                  "name": "1 (S_44)",
+                                                                                  "deadend": true,
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "name": "3 (S_47)",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "8 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "9 (S_49)",
+                                                                                              "deadend": true,
+                                                                                              "children": []
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    },
+                                                                                    {
+                                                                                      "name": "8 (S_47)",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "3 (S_49)",
+                                                                                              "deadend": true,
+                                                                                              "children": []
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                },
+                                                                                {
+                                                                                  "name": "8 (S_44)",
+                                                                                  "children": [
+                                                                                    {
+                                                                                      "name": "3 (S_47)",
+                                                                                      "children": [
+                                                                                        {
+                                                                                          "name": "9 (S_48)",
+                                                                                          "children": [
+                                                                                            {
+                                                                                              "name": "1 (S_49)",
+                                                                                              "children": [
+                                                                                                {
+                                                                                                  "name": "1 (S_54)",
+                                                                                                  "children": [
+                                                                                                    {
+                                                                                                      "name": "6 (S_74)",
+                                                                                                      "children": [
+                                                                                                        {
+                                                                                                          "name": "7 (S_55)",
+                                                                                                          "deadend": true,
+                                                                                                          "children": [
+                                                                                                            {
+                                                                                                              "name": "6 (S_65)",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "name": "8 (S_75)",
+                                                                                                                  "children": [
+                                                                                                                    {
+                                                                                                                      "name": "4 (S_85)",
+                                                                                                                      "deadend": true,
+                                                                                                                      "children": [
+                                                                                                                        {
+                                                                                                                          "name": "7 (S_67)",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "name": "8 (S_69)",
+                                                                                                                              "children": [],
+                                                                                                                              "deadend": true
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                          "name": "8 (S_67)",
+                                                                                                                          "children": [
+                                                                                                                            {
+                                                                                                                              "name": "7 (S_69)",
+                                                                                                                              "children": [],
+                                                                                                                              "deadend": true
+                                                                                                                            }
+                                                                                                                          ]
+                                                                                                                        }
+                                                                                                                      ]
+                                                                                                                    }
+                                                                                                                  ]
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            },
+                                                                                                            {
+                                                                                                              "name": "8 (S_65)",
+                                                                                                              "children": [
+                                                                                                                {
+                                                                                                                  "name": "6 (S_75)",
+                                                                                                                  "children": [],
+                                                                                                                  "deadend": true
+                                                                                                                }
+                                                                                                              ]
+                                                                                                            }
+                                                                                                          ]
+                                                                                                        }
+                                                                                                      ]
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              ]
+                                                                                            }
+                                                                                          ]
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  ]
+                                                                                }
+                                                                              ]
+                                                                            }
+                                                                          ]
+                                                                        },
+                                                                        {
+                                                                          "name": "9 (S_43)",
+                                                                          "children": [
+                                                                            {
+                                                                              "name": "5 (S_53)",
+                                                                              "children": [],
+                                                                              "deadend": true
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "name": "8 (S_24)",
+                                          "children": [
+                                            {
+                                              "name": "5 (S_26)",
+                                              "children": [],
+                                              "deadend": true
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
